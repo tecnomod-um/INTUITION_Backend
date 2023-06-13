@@ -1,0 +1,178 @@
+{
+	"crm": [
+		{
+			"property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+			"label": "is subclass of",
+			"object": "crm"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002331",
+			"label": "involved in",
+			"object": "omim"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002436",
+			"label": "molecularly interacts with",
+			"object": "prot"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002428",
+			"label": "involved in regulation of",
+			"object": "gene"
+		}
+	],
+	"gene": [
+		{
+			"property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+			"label": "is subclass of",
+			"object": "gene"
+		},
+		{
+			"property": "http://semanticscience.org/resource/SIO_010078",
+			"label": "encodes",
+			"object": "prot"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002331",
+			"label": "involved in",
+			"object": "omim"
+		}
+	],
+	"gene2phen": [
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+			"label": "object",
+			"object": "omim"
+		},
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+			"label": "subject",
+			"object": "gene"
+		}
+	],
+	"go": [
+		{
+			"property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+			"label": "is subclass of",
+			"object": "go"
+		}
+	],
+	"mi": [
+		{
+			"property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+			"label": "is subclass of",
+			"object": "mi"
+		}
+	],
+	"omim": [
+		{
+			"property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+			"label": "is subclass of",
+			"object": "omim"
+		}
+	],
+	"prot": [
+		{
+			"property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+			"label": "is subclass of",
+			"object": "prot"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002331",
+			"label": "involved in",
+			"object": "go"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002327",
+			"label": "enables",
+			"object": "go"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002436",
+			"label": "molecularly interacts with",
+			"object": "prot"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002428",
+			"label": "involved in regulation of",
+			"object": "gene"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002429",
+			"label": "involved in positive regulation of",
+			"object": "gene"
+		},
+		{
+			"property": "http://purl.obolibrary.org/obo/RO_0002430",
+			"label": "involved in negative regulation of",
+			"object": "gene"
+		}
+	],
+	"prot2bp": [
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+			"label": "object",
+			"object": "go"
+		},
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+			"label": "subject",
+			"object": "prot"
+		}
+	],
+	"prot2cc": [
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+			"label": "object",
+			"object": "go"
+		},
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+			"label": "subject",
+			"object": "prot"
+		}
+	],
+	"prot2mf": [
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+			"label": "object",
+			"object": "go"
+		},
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+			"label": "subject",
+			"object": "prot"
+		}
+	],
+	"prot2prot": [
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+			"label": "object",
+			"object": "prot"
+		},
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+			"label": "subject",
+			"object": "prot"
+		}
+	],
+	"tad": [
+		{
+			"property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+			"label": "is subclass of",
+			"object": "tad"
+		}
+	],
+	"tfac2gene": [
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+			"label": "object",
+			"object": "gene"
+		},
+		{
+			"property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+			"label": "subject",
+			"object": "prot"
+		}
+	]
+}

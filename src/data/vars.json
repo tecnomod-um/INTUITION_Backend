@@ -1,0 +1,54 @@
+{
+	"gene": {
+		"label": "http://semanticscience.org/resource/SIO_010035",
+		"uri_graph": "http://rdf.biogateway.eu/graph/gene"
+	},
+	"prot": {
+		"label": "http://semanticscience.org/resource/SIO_010043",
+		"uri_graph": "http://rdf.biogateway.eu/graph/prot"
+	},
+	"crm": {
+		"label": "http://purl.obolibrary.org/obo/SO_0000727",
+		"uri_graph": "http://rdf.biogateway.eu/graph/crm"
+	},
+	"tad": {
+		"label": "http://purl.obolibrary.org/obo/SO_0002304",
+		"uri_graph": "http://rdf.biogateway.eu/graph/tad"
+	},
+	"omim": {
+		"label": "http://purl.bioontology.org/ontology/OMIM",
+		"uri_graph": "http://rdf.biogateway.eu/graph/omim"
+	},
+	"go": {
+		"label": "http://purl.obolibrary.org/obo/go.owl",
+		"uri_graph": "http://rdf.biogateway.eu/graph/go"
+	},
+	"mi": {
+		"label": "http://purl.obolibrary.org/obo/mi.owl",
+		"uri_graph": "http://rdf.biogateway.eu/graph/mi"
+	},
+	"gene2phen": {
+		"label": "gene-phenotype relation",
+		"uri_graph": "http://rdf.biogateway.eu/graph/gene2phen"
+	},
+	"prot2bp": {
+		"label": "protein-biological process",
+		"uri_graph": "http://rdf.biogateway.eu/graph/prot2bp"
+	},
+	"prot2cc": {
+		"label": "protein-cellular component",
+		"uri_graph": "http://rdf.biogateway.eu/graph/prot2cc"
+	},
+	"prot2mf": {
+		"label": "protein-molecular function",
+		"uri_graph": "http://rdf.biogateway.eu/graph/prot2mf"
+	},
+	"prot2prot": {
+		"label": "protein-protein interaction",
+		"uri_graph": "http://rdf.biogateway.eu/graph/prot2prot"
+	},
+	"tfac2gene": {
+		"label": "tfactor-gene regulation",
+		"uri_graph": "http://rdf.biogateway.eu/graph/tfac2gene"
+	}
+}
