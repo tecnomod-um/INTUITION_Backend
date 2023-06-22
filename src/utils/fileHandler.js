@@ -89,4 +89,20 @@ const calculateMaxElements = (listData, maxSizeInBytes) => {
 
     return maxElements;
 }
-module.exports = { sendFile, sendPartialFile };
+
+const readFile = (file) => {
+    return new Promise((resolve, reject) => {
+        const filePath = path.join(__dirname, "..", file);
+
+        fs.readFile(filePath, "utf8", (err, data) => {
+            if (err) {
+                console.error(err);
+                reject(err);
+            } else {
+                resolve(JSON.parse(data));
+            }
+        });
+    });
+}
+
+module.exports = { sendFile, sendPartialFile, readFile };
