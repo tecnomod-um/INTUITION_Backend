@@ -61,10 +61,9 @@ const getVarsFromSPARQL = async (endpoint) => {
 const getPropertiesFromSPARQL = async (vars, endpoint) => {
     const objectProperties = {};
     const dataProperties = {};
-    console.log("Fetching properties");
     for (const varKey of Object.keys(vars)) {
         try {
-            console.log(`Fetching properties for ${varKey}`);
+            console.log(`Examining ${varKey} properties`);
             objectProperties[varKey] = [];
             dataProperties[varKey] = [];
             // Get properties for the current graph
@@ -90,13 +89,11 @@ const getPropertiesFromSPARQL = async (vars, endpoint) => {
                     if (!existingObject) {
                         objectProperties[varKey].push(objectToPush);
                     }
-                } else {
-                    console.log("Dont have any " + objectURI);
-
+                } else if (prop.o) {
                     var objectToPush = {
                         property: prop.p.value,
                         label: prop.name.value,
-                        object: foundVar.uri_graph.substring(foundVar.uri_graph.lastIndexOf('/') + 1)
+                        object: prop.o.type
                     };
                     var existingObject = dataProperties[varKey].find((obj) =>
                         obj.property === objectToPush.property &&
@@ -115,9 +112,9 @@ const getPropertiesFromSPARQL = async (vars, endpoint) => {
             throw error;
         }
     }
-    console.log("DONE WITH OBJECT")
+    console.log("Object properties:")
     console.log(objectProperties)
-    console.log("DONE WITH DATA")
+    console.log("Data properties:")
     console.log(dataProperties)
     return {
         objectProperties: objectProperties,
@@ -125,9 +122,10 @@ const getPropertiesFromSPARQL = async (vars, endpoint) => {
     }
 }
 
-
+const getNodesFromSPARQL = async () => { }
 module.exports = {
     getVarsFromSPARQL,
     getPropertiesFromSPARQL,
+    getNodesFromSPARQL,
     executeSPARQLQuery,
 };

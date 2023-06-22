@@ -25,7 +25,7 @@ const getLabelForGraph = (graph) => {
 
 const getPropertiesForType = (type) => {
     return (`
-    SELECT DISTINCT ?p ?name ?type WHERE {
+    SELECT DISTINCT ?p ?o ?name ?type WHERE {
         ?s ?p ?o .
         ?s <http://www.w3.org/2000/01/rdf-schema#subClassOf>  ${type} .
         ?p <http://www.w3.org/2004/02/skos/core#prefLabel> ?name .
