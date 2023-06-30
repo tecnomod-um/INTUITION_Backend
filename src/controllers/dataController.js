@@ -29,7 +29,7 @@ router.get('/:file', async (req, res) => {
                         console.log("Vars fetched from server")
                         fileContent = await req.session.varsPromise;
                         req.session.vars = fileContent;
-                        console.log(req.session.vars);
+                        //console.log(req.session.vars);
                         req.session.save();
                     } else {
                         console.log("Vars fetched from session")
