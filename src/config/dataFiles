@@ -1,0 +1,6 @@
+module.exports = {
+    data_properties: 'data/data_properties.json',
+    object_properties: 'data/object_properties.json',
+    vars: 'data/vars.json',
+    nodes: 'data/nodes.json',
+};
