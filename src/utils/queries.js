@@ -50,6 +50,8 @@ const getPropertiesForType = (type) => {
         OPTIONAL { ?p <http://www.w3.org/2004/02/skos/core#prefLabel> ?namePrefLabel } .
         OPTIONAL { ?p <http://www.w3.org/2004/02/skos/core#altLabel> ?nameAltLabel } .
         BIND(COALESCE(?nameRdfsLabel, ?namePrefLabel, ?nameAltLabel) AS ?name)
+
+        OPTIONAL { ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?type }
     }
     `);
 }
@@ -70,6 +72,7 @@ const getPropertiesForGraph = (graph) => {
     }
     `);
 }
+
 const getObjectForTriplet = (graph) => {
     return (`
     SELECT ?object
@@ -137,7 +140,6 @@ const getDataPropertiesForTriplet = (graph) => {
     }
     `);
 }
-
 
 module.exports = {
     getAllGraphs,

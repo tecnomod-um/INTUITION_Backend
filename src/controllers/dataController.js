@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const sparqlUtils = require('../utils/sparqlUtils.js');
-const fileHandler = require('../utils/fileHandler.js');
+const dataFetcher = require('../utils/dataFetcher.js');
 
 router.get('/:file', async (req, res) => {
     const dataFiles = {
@@ -21,7 +20,7 @@ router.get('/:file', async (req, res) => {
             switch (req.params.file) {
                 case 'vars':
                     if (!req.session.varsPromise && !req.session.vars) {
-                        req.session.varsPromise = sparqlUtils.getVarsFromSPARQL(endpoint);
+                        req.session.varsPromise = dataFetcher.getVarsFromSPARQL(endpoint);
                         req.session.save();
                     }
 
@@ -40,7 +39,7 @@ router.get('/:file', async (req, res) => {
                 case 'object_properties':
                 case 'data_properties':
                     if (!req.session.varsPromise && !req.session.vars) {
-                        req.session.varsPromise = sparqlUtils.getVarsFromSPARQL(endpoint);
+                        req.session.varsPromise = dataFetcher.getVarsFromSPARQL(endpoint);
                         req.session.save();
                     }
 
@@ -55,7 +54,7 @@ router.get('/:file', async (req, res) => {
 
                     if (!req.session.propertiesPromise && (!req.session.object_properties || !req.session.data_properties)) {
                         console.log("Properties fetched from server")
-                        req.session.propertiesPromise = sparqlUtils.getPropertiesFromSPARQL(vars, endpoint);
+                        req.session.propertiesPromise = dataFetcher.getPropertiesFromSPARQL(vars, endpoint);
                         req.session.save();
                     }
 
@@ -76,6 +75,7 @@ router.get('/:file', async (req, res) => {
 
                 case 'nodes':
                     const { filter } = req.query;
+                    // TODO
                     fileHandler.sendPartialFile(res, file, filter);
                     break;
             }
