@@ -167,9 +167,9 @@ const createPropertyObject = (prop, vars) => {
 
     return foundVarKey ? {
         property: prop.p.value,
-        label: prop.name?.value || prop.p.value,
+        label: prop.name?.value || prop.p.value.substring(prop.p.value.lastIndexOf('/') + 1),
         object: foundVarKey
-    } : { property: prop.p.value, label: prop.name?.value || prop.p.value, type: prop.o?.type };
+    } : { property: prop.p.value, label: prop.name?.value || prop.p.value.substring(prop.p.value.lastIndexOf('/') + 1), type: prop.o?.type };
 }
 
 // Push property to array if not already present
