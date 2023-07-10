@@ -1,0 +1,4 @@
+module.exports = {
+    node: 100,
+    total: 500,
+}

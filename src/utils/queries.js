@@ -23,12 +23,12 @@ const getLabelForGraph = (graph) => {
             BIND(COALESCE(?VarTypeRdfsLabel, ?VarTypePrefLabel, ?VarTypeAltLabel) AS ?VarTypeLabel)
         
             FILTER NOT EXISTS {
-                ?VarType <http://www.w3.org/2002/07/owl#someValuesFrom> ?VarSubType .
-                FILTER(?VarSubType != ?VarType)
+                ?VarType <http://www.w3.org/2002/07/owl#someValuesFrom> ?VarParent .
+                FILTER(?VarParent != ?VarType)
             }
             FILTER NOT EXISTS {
-                ?VarType <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?VarSubType .
-                FILTER(?VarSubType != ?VarType)
+                ?VarType <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?VarParent .
+                FILTER(?VarParent != ?VarType)
             }
         }
     }
@@ -66,9 +66,8 @@ const getPropertiesForGraph = (graph) => {
             OPTIONAL { ?p <http://www.w3.org/2004/02/skos/core#prefLabel> ?namePrefLabel } .
             OPTIONAL { ?p <http://www.w3.org/2004/02/skos/core#altLabel> ?nameAltLabel } .
             BIND(COALESCE(?nameRdfsLabel, ?namePrefLabel, ?nameAltLabel) AS ?name)
-
-            OPTIONAL { ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?type }
         }
+        OPTIONAL { ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?type }
     }
     `);
 }
@@ -129,7 +128,7 @@ const getMissingElementForTriplet = (graph, property) => {
 
 const getDataPropertiesForTriplet = (graph) => {
     return (`
-    SELECT DISTINCT ?p ?name ?o WHERE {
+    SELECT DISTINCT ?p ?name ?o ?type WHERE {
         GRAPH ${graph} {
             ?s ?p ?o .
             OPTIONAL { ?p <http://www.w3.org/2000/01/rdf-schema#label> ?nameRdfsLabel } .
@@ -137,7 +136,125 @@ const getDataPropertiesForTriplet = (graph) => {
             OPTIONAL { ?p <http://www.w3.org/2004/02/skos/core#altLabel> ?nameAltLabel } .
             BIND(COALESCE(?nameRdfsLabel, ?namePrefLabel, ?nameAltLabel) AS ?name)
         }
+        OPTIONAL { ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?type }
     }
+    `);
+}
+
+const getNodesByType = (type, varKey, limit) => {
+    const queryLimit = limit ? ` LIMIT ${limit}` : "";
+    return (`
+    SELECT DISTINCT ?node ?label ?varType WHERE {
+        ?node ?property <${type}> .
+        
+        OPTIONAL { ?node <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel } .
+        OPTIONAL { ?node <http://www.w3.org/2004/02/skos/core#prefLabel> ?prefLabel } .
+        OPTIONAL { ?node <http://www.w3.org/2004/02/skos/core#altLabel> ?altLabel } .
+        BIND(COALESCE(?rdfsLabel, ?prefLabel, ?altLabel) AS ?label)
+        
+        VALUES ?property {
+                    <http://www.w3.org/2002/07/owl#someValuesFrom> 
+                    <http://www.w3.org/2000/01/rdf-schema#subClassOf>
+        }
+        
+        BIND("${varKey}" AS ?varType)
+    }${queryLimit}
+    `);
+}
+
+const getNodesByGraph = (graph, varKey, limit) => {
+    const queryLimit = limit ? ` LIMIT ${limit}` : "";
+    return (`
+    SELECT DISTINCT ?node ?label ?varType WHERE {
+        GRAPH <${graph}> {
+                ?node ?property ?o .
+                
+                OPTIONAL { ?node <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel } .
+                OPTIONAL { ?node <http://www.w3.org/2004/02/skos/core#prefLabel> ?prefLabel } .
+                OPTIONAL { ?node <http://www.w3.org/2004/02/skos/core#altLabel> ?altLabel } .
+                BIND(COALESCE(?rdfsLabel, ?prefLabel, ?altLabel) AS ?label)
+                
+                BIND("${varKey}" AS ?varType)
+
+                FILTER NOT EXISTS {
+                    ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent .
+                    FILTER(?o != ?parent)
+                }
+                FILTER NOT EXISTS {
+                    ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent .
+                    FILTER(?o != ?parent)
+                }
+                FILTER NOT EXISTS {
+                    ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent .
+                    FILTER(?o != ?parent)
+                }
+        }
+    }${queryLimit}
+    `);
+}
+
+const encapsulateUnion = (union) => {
+    return (`
+    SELECT DISTINCT * WHERE
+    {
+        ${union}
+    }
+    `);
+}
+
+const getFilteredByType = (type, varKey, limit, filter) => {
+    const queryLimit = limit ? ` LIMIT ${limit}` : "";
+    return (`
+    SELECT DISTINCT ?node ?label ?varType WHERE {
+        ?node ?property <${type}> .
+
+        FILTER(CONTAINS(LCASE(str(?label)), "${filter}") || CONTAINS(LCASE(str(?node)), "${filter}") || CONTAINS(LCASE(str(?varType)), "${filter}")) .
+        
+        OPTIONAL { ?node <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel } .
+        OPTIONAL { ?node <http://www.w3.org/2004/02/skos/core#prefLabel> ?prefLabel } .
+        OPTIONAL { ?node <http://www.w3.org/2004/02/skos/core#altLabel> ?altLabel } .
+        BIND(COALESCE(?rdfsLabel, ?prefLabel, ?altLabel) AS ?label)
+        
+        VALUES ?property {
+                    <http://www.w3.org/2002/07/owl#someValuesFrom> 
+                    <http://www.w3.org/2000/01/rdf-schema#subClassOf>
+        }
+        
+        BIND("${varKey}" AS ?varType)
+    }${queryLimit}
+    `);
+}
+
+const getFilteredByGraph = (graph, varKey, limit, filter) => {
+    const queryLimit = limit ? ` LIMIT ${limit}` : "";
+    return (`
+    SELECT DISTINCT ?node ?label ?varType WHERE {
+        GRAPH <${graph}> {
+                ?node ?property ?o .
+                
+                OPTIONAL { ?node <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel } .
+                OPTIONAL { ?node <http://www.w3.org/2004/02/skos/core#prefLabel> ?prefLabel } .
+                OPTIONAL { ?node <http://www.w3.org/2004/02/skos/core#altLabel> ?altLabel } .
+                BIND(COALESCE(?rdfsLabel, ?prefLabel, ?altLabel) AS ?label)
+                
+                BIND("${varKey}" AS ?varType)
+
+                FILTER NOT EXISTS {
+                    ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent .
+                    FILTER(?o != ?parent)
+                }
+                FILTER NOT EXISTS {
+                    ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent .
+                    FILTER(?o != ?parent)
+                }
+                FILTER NOT EXISTS {
+                    ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent .
+                    FILTER(?o != ?parent)
+                }
+                
+                FILTER(CONTAINS(LCASE(str(?label)), "${filter}") || CONTAINS(LCASE(str(?node)), "${filter}") || CONTAINS(LCASE(str(?varType)), "${filter}")) .
+        }
+    }${queryLimit}
     `);
 }
 
@@ -150,4 +267,9 @@ module.exports = {
     getMissingElementForTriplet,
     getDataPropertiesForTriplet,
     getPropertiesForGraph,
+    getNodesByType,
+    getNodesByGraph,
+    getFilteredByType,
+    getFilteredByGraph,
+    encapsulateUnion,
 }

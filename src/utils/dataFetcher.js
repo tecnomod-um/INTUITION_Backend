@@ -197,8 +197,9 @@ const fetchTripletProperties = async (vars, endpoint, varKey, varValue) => {
     if (foundSubject) objectProps.push(createTripletProperty('subject', subjectKey));
 
     dataProperty.forEach(prop => {
-        if (prop.o) {
-            pushToPropArray(createPropertyObject(prop, vars), dataProps);
+        if (!prop.p?.value.includes('object') && !prop.p?.value.includes('subject')) {
+            const propObject = createPropertyObject(prop, vars);
+            if (prop.o) pushToPropArray(propObject, dataProps);
         }
     });
 
@@ -224,9 +225,76 @@ const createTripletProperty = (label, key) => ({
     property: `http://www.w3.org/1999/02/22-rdf-syntax-ns#${label}`,
     label: label,
     object: key
-});
+})
+
+const getNodesFromSPARQL = async (vars, endpoint, limit, totalLimit) => {
+    const unionQueries = Object.keys(vars).map(key =>
+        vars[key].useGraphOnly
+            ? `{${queries.getNodesByGraph(vars[key].uri_graph, key, limit)}}`
+            : `{${queries.getNodesByType(vars[key].uri_element, key, limit)}}`
+    );
+    const fullQuery = queries.encapsulateUnion(unionQueries.join(" UNION "));
+    const allNodesResponse = await sparqlPetition.executeQuery(endpoint, fullQuery);
+    const allNodes = allNodesResponse.results.bindings;
+    return buildNodes(vars, allNodes, totalLimit);
+}
+
+const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
+    console.log("in filter")
+    const sanitizedFilter = stringUtils.sanitizeInput(filter.toLowerCase());
+    const filterQueryList = Object.keys(vars).map(key =>
+        vars[key].useGraphOnly
+            ? queries.getFilteredByGraph(vars[key].uri_graph, key, limit, sanitizedFilter)
+            : queries.getFilteredByType(vars[key].uri_element, key, limit, sanitizedFilter)
+    );
+    const allNodesResponses = await Promise.all(
+        filterQueryList.map(query => sparqlPetition.executeQuery(endpoint, query))
+    );
+    const allNodes = allNodesResponses.flatMap(response => response.results.bindings);
+    return buildNodes(vars, allNodes, totalLimit);
+}
+
+const buildNodes = (vars, nodes, totalLimit) => {
+    const limitPerVarType = Math.floor(totalLimit / Object.keys(vars).length);
+    let remaining = totalLimit - limitPerVarType * Object.keys(vars).length;
+    const nodesObj = Object.keys(vars).reduce((acc, varType) => {
+        acc[varType] = [];
+        return acc;
+    }, {});
+
+    for (let node of nodes) {
+        if (!isValidUri(node.node.value)) continue;
+
+        const varType = node.varType.value;
+        const remainingForThisVarType = limitPerVarType - nodesObj[varType].length;
+        const label = node.label?.value;
+
+        if (remainingForThisVarType <= 0 && remaining <= 0) continue;
+        nodesObj[varType].push({
+            uri: node.node.value,
+            label: label
+        });
+        if (remainingForThisVarType <= 0 && remaining > 0) {
+            remaining--;
+        }
+    }
+    // Go over nodes again to add URI part to duplicated labels
+    for (let varType of Object.keys(nodesObj)) {
+        let labels = nodesObj[varType].map(node => node.label);
+        let duplicates = labels.filter((item, index) => labels.indexOf(item) != index);
+
+        for (let node of nodesObj[varType]) {
+            if (duplicates.includes(node.label)) {
+                node.label = `${node.label ? `${node.label} ` : ''}(${stringUtils.getLastPartUri(node.uri)})`;
+            }
+        }
+    }
+    return nodesObj;
+}
 
 module.exports = {
     getVarsFromSPARQL,
     getPropertiesFromSPARQL,
-};
+    getNodesFromSPARQL,
+    getFilteredNodes,
+}
