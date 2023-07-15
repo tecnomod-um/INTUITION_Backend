@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const dataFetcher = require('../utils/dataFetcher.js');
-const dataFiles = require('../config/dataFiles');
 const maxValues = require('../config/maxValues');
 
 const getVars = async (req, endpoint) => {
@@ -24,13 +23,7 @@ const getVars = async (req, endpoint) => {
 
 router.get('/:file', async (req, res, next) => {
     const { file } = req.params;
-    const filePath = dataFiles[file];
     const endpoint = req.headers['x-sparql-endpoint'];
-
-    if (!filePath) {
-        return res.sendStatus(404);
-    }
-
     try {
         let fileContent;
         let vars;
@@ -39,25 +32,28 @@ router.get('/:file', async (req, res, next) => {
                 fileContent = await getVars(req, endpoint);
                 break;
 
-            case 'object_properties':
-            case 'data_properties':
+            case 'properties':
+                let startTime = Date.now();
                 vars = await getVars(req, endpoint);
-
-                if (!req.session.propertiesPromise && (!req.session.object_properties || !req.session.data_properties)) {
+                console.log(vars)
+                if (!req.session.propertiesPromise && !req.session.properties) {
                     req.session.propertiesPromise = dataFetcher.getPropertiesFromSPARQL(vars, endpoint);
                     req.session.save();
                 }
-
                 let properties;
-                if (!req.session.object_properties || !req.session.data_properties) {
+                if (!req.session.properties) {
                     properties = await req.session.propertiesPromise;
-                    req.session.object_properties = properties.objectProperties;
-                    req.session.data_properties = properties.dataProperties;
+                    req.session.properties = properties;
                     req.session.save();
                 }
 
-                fileContent = file === 'object_properties' ? req.session.object_properties : req.session.data_properties;
+                fileContent = req.session.properties;
+
+                let endTime = Date.now();
+                let timeTaken = endTime - startTime;
+                console.log(`Time taken: ${timeTaken} milliseconds`);
                 break;
+
 
             case 'nodes':
                 vars = await getVars(req, endpoint);
@@ -79,7 +75,6 @@ router.get('/:file', async (req, res, next) => {
                     fileContent = await dataFetcher.getFilteredNodes(vars, endpoint, maxValues.node, filter, maxValues.total);
                 break;
         }
-
         res.setHeader('Content-Type', 'application/json');
         res.json(fileContent);
     } catch (err) {

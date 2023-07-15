@@ -1,6 +1,5 @@
 const axios = require('axios');
 
-// Used both in backend queries and received node queries
 const executeQuery = async (endpoint, query) => {
     const options = {
         method: 'POST',
@@ -13,8 +12,16 @@ const executeQuery = async (endpoint, query) => {
             query,
         },
     };
-    const response = await axios.request(options);
-    return response.data;
+
+    try {
+        const response = await axios.request(options);
+        return response.data;
+    } catch (error) {
+        console.error("Error while executing query:", error.message);
+        if (error.response && error.response.data) {
+            console.error("Response body:", error.response.data);
+        }
+    }
 }
 
 module.exports = {

@@ -1,5 +1,6 @@
 const queries = require('./queries.js');
 const stringUtils = require('./stringUtils.js');
+const w3cTypes = require('../config/typeList');
 const sparqlPetition = require('./sparqlPetitionHandler.js');
 
 const getVarsFromSPARQL = async (endpoint) => {
@@ -97,79 +98,112 @@ const handleDuplicates = (vars, formattedLabel, newValue) => {
     vars[`${formattedLabel}_${stringUtils.getDomain(newValue.uri_element)}`] = newValue;
 }
 
+// Fetches both object and data properties
 const getPropertiesFromSPARQL = async (vars, endpoint) => {
     const objectProperties = {};
     const dataProperties = {};
+    const { triplet, simple } = separateVars(vars);
 
-    // Separate vars between triplets and simple elements 
-    const { triplet, simple } = Object.entries(vars).reduce(
-        (result, [key, value]) => {
-            result[value.uri_element === 'Triplet' ? 'triplet' : 'simple'][key] = value;
-            return result;
-        },
-        { triplet: {}, simple: {} }
-    );
-
-    // Process simple elements properties
-    await Promise.all(Object.entries(simple).map(async ([varKey, varValue]) => {
-        try {
-            const { objectProps, dataProps } = await fetchSimpleProperties(vars, endpoint, varKey, varValue);
-            objectProperties[varKey] = objectProps;
-            dataProperties[varKey] = dataProps;
-        } catch (error) {
-            console.error(`Error retrieving properties for ${varKey} from SPARQL:`, error);
-        }
+    // Process simple and triplet elements properties in parallel
+    const promiseSimple = Promise.all(Object.entries(simple).map(async ([varKey, varValue]) => {
+        objectProperties[varKey] = [];
+        dataProperties[varKey] = [];
+        return fetchSimpleProperties(varKey, varValue, vars, endpoint, objectProperties[varKey], dataProperties[varKey]);
     }));
 
-    // Process triplet properties
-    await Promise.all(Object.entries(triplet).map(async ([varKey, varValue]) => {
-        try {
-            const { objectProps, dataProps } = await fetchTripletProperties(vars, endpoint, varKey, varValue);
-            objectProperties[varKey] = objectProps;
-            dataProperties[varKey] = dataProps;
-        } catch (error) {
-            console.error(`Error retrieving properties for ${varKey} from SPARQL:`, error);
-        }
+    const promiseTriplet = Promise.all(Object.entries(triplet).map(async ([varKey, varValue]) => {
+        objectProperties[varKey] = [];
+        dataProperties[varKey] = [];
+        return fetchTripletProperties(varKey, varValue, vars, endpoint, objectProperties[varKey], dataProperties[varKey]);
     }));
 
-    return {
-        objectProperties: objectProperties,
-        dataProperties: dataProperties,
-    }
+    await Promise.all([promiseSimple, promiseTriplet]);
+
+    return { objectProperties, dataProperties };
 }
 
-// Fetch non-triplet properties
-const fetchSimpleProperties = async (vars, endpoint, varKey, varValue) => {
-    const objectProps = [];
-    const dataProps = [];
-    const query = varValue.useGraphOnly ?
-        queries.getPropertiesForGraph(`<${varValue.uri_graph}>`) :
-        queries.getPropertiesForType(`<${varValue.uri_element}>`);
+const separateVars = (vars) => {
+    return Object.entries(vars).reduce((result, [key, value]) => {
+        result[value.uri_element === 'Triplet' ? 'triplet' : 'simple'][key] = value;
+        return result;
+    }, { triplet: {}, simple: {} });
+}
 
-    const propertyResponse = await sparqlPetition.executeQuery(endpoint, query);
+const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
+    const queryObject = varValue.useGraphOnly
+        ? queries.getPropertiesForGraph(`<${varValue.uri_graph}>`)
+        : queries.getPropertiesForType(`<${varValue.uri_element}>`)
 
-    propertyResponse.results.bindings.forEach(prop => {
-        const propObject = createPropertyObject(prop, vars);
-
-        if (propObject.object) {
-            pushToPropArray(propObject, objectProps);
-        } else if (prop.o) {
-            pushToPropArray(propObject, dataProps);
+    const propertyResponse = await sparqlPetition.executeQuery(endpoint, queryObject);
+    const emptyProps = {};
+    propertyResponse.results.bindings.map(prop => {
+        if (!prop.type?.value) {
+            emptyProps[prop.p.value] = prop;
+        } else {
+            const propObject = createPropertyObject(prop, vars);
+            pushToPropArray(propObject, objectProperties);
         }
     });
+    // Treat empty properties
+    const noValueProps = [];
+    if (Object.keys(emptyProps).length > 0) {
+        const allPropURIs = Object.values(emptyProps).map(prop => prop.p.value);
+        const allVarURIs = Object.values(vars).map(v => v.uri_element);
+        const queryObjectEmpty = varValue.useGraphOnly
+            ? queries.getEmptyPropertiesForGraph(`<${varValue.uri_graph}>`, allPropURIs, allVarURIs)
+            : queries.getEmptyPropertiesForType(`<${varValue.uri_element}>`, allPropURIs, allVarURIs);
 
-    return { objectProps, dataProps };
+        const emptyPropertyResponse = await sparqlPetition.executeQuery(endpoint, queryObjectEmpty);
+        emptyPropertyResponse.results.bindings.map(prop => {
+            if (!prop.basicType?.value) noValueProps.push(prop.p.value);
+            else {
+                emptyProps[prop.p.value].type = emptyProps[prop.p.value].type || {};
+                emptyProps[prop.p.value].type.value = prop.basicType.value;
+                const propObject = createPropertyObject(emptyProps[prop.p.value], vars);
+                propObject.object ?
+                    pushToPropArray(propObject, objectProperties) :
+                    pushToPropArray(propObject, dataProperties);
+            }
+        });
+        if (noValueProps.length > 0) {
+            const noValuePropertyResponse = await sparqlPetition.executeQuery(endpoint, queries.getPropertyType(noValueProps));
+            noValuePropertyResponse.results.bindings.map(prop => {
+                // If no value, it will be treated as an object property for classes without hierarchy
+                if (prop.propertyType.value === 'http://www.w3.org/2002/07/owl#ObjectProperty') {
+                    emptyProps[prop.p.value].type = emptyProps[prop.p.value].type || {};
+                    emptyProps[prop.p.value].type.value = 'http://www.w3.org/2001/XMLSchema#anyURI';
+                    const propObject = createPropertyObject(emptyProps[prop.p.value], vars);
+                    pushToPropArray(propObject, objectProperties);
+                } else {
+                    emptyProps[prop.p.value].type = emptyProps[prop.p.value].type || {};
+                    emptyProps[prop.p.value].type.value = 'http://www.w3.org/2001/XMLSchema#string';
+                    const propObject = createPropertyObject(emptyProps[prop.p.value], vars);
+                    pushToPropArray(propObject, dataProperties);
+                }
+            });
+        }
+    }
+    console.log(`Fetched ${varKey} simple objects (OP:${objectProperties.length}, DP:${dataProperties.length})`);
+    return;
 }
 
 const createPropertyObject = (prop, vars) => {
+    let propLabel, propValue = '';
     const objectURI = prop.type?.value;
     const foundVarKey = Object.keys(vars).find(key => objectURI === vars[key].uri_element);
+    // If the object isn't recognized, the property will allow all classes without hierarchy
+    if (foundVarKey)
+        propValue = foundVarKey;
+    else propValue = prop.type?.value;
+    const hasOutsideObject = propValue === 'http://www.w3.org/2001/XMLSchema#anyURI';
+    propLabel = prop.name?.value || prop.p.value.substring(prop.p.value.lastIndexOf('/') + 1);
 
-    return foundVarKey ? {
+    const result = (foundVarKey || hasOutsideObject) ? {
         property: prop.p.value,
-        label: prop.name?.value || prop.p.value.substring(prop.p.value.lastIndexOf('/') + 1),
-        object: foundVarKey
-    } : { property: prop.p.value, label: prop.name?.value || prop.p.value.substring(prop.p.value.lastIndexOf('/') + 1), type: prop.o?.type };
+        label: propLabel,
+        object: propValue
+    } : { property: prop.p.value, label: propLabel, type: prop.type?.value || 'http://www.w3.org/2001/XMLSchema#string'};
+    return result;
 }
 
 // Push property to array if not already present
@@ -179,31 +213,31 @@ const pushToPropArray = (propObject, propArray) => {
     }
 }
 
-const fetchTripletProperties = async (vars, endpoint, varKey, varValue) => {
-    const objectProps = [];
-    const dataProps = [];
-
+const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
+    // Run all three SPARQL queries concurrently.
     const [objectResponse, subjectResponse, dataPropertyResponse] = await Promise.all([
-        sparqlPetition.executeQuery(endpoint, queries.getObjectForTriplet(`<${varValue.uri_graph}>`)),
-        sparqlPetition.executeQuery(endpoint, queries.getSubjectForTriplet(`<${varValue.uri_graph}>`)),
+        sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(`<${varValue.uri_graph}>`, 'object')),
+        sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(`<${varValue.uri_graph}>`, 'subject')),
         sparqlPetition.executeQuery(endpoint, queries.getDataPropertiesForTriplet(`<${varValue.uri_graph}>`))
     ]);
 
-    const [foundObject, objectProperty, objectKey] = await findProperty(vars, endpoint, objectResponse, 'object', varValue);
-    const [foundSubject, subjectProperty, subjectKey] = await findProperty(vars, endpoint, subjectResponse, 'subject', varValue);
-    const dataProperty = dataPropertyResponse.results.bindings;
+    // Handle object properties
+    const [foundObject, foundSubject] = await Promise.all([
+        findProperty(vars, endpoint, objectResponse, 'object', varValue),
+        findProperty(vars, endpoint, subjectResponse, 'subject', varValue)
+    ]);
+    if (foundObject) objectProperties.push(createTripletProperty('object', foundObject));
+    if (foundSubject) objectProperties.push(createTripletProperty('subject', foundSubject));
 
-    if (foundObject) objectProps.push(createTripletProperty('object', objectKey));
-    if (foundSubject) objectProps.push(createTripletProperty('subject', subjectKey));
-
-    dataProperty.forEach(prop => {
+    // Handle data properties
+    dataPropertyResponse.results.bindings.map(async (prop) => {
         if (!prop.p?.value.includes('object') && !prop.p?.value.includes('subject')) {
             const propObject = createPropertyObject(prop, vars);
-            if (prop.o) pushToPropArray(propObject, dataProps);
+            if (!propObject.object) pushToPropArray(propObject, dataProperties);
         }
     });
-
-    return { objectProps, dataProps };
+    console.log(`Fetched ${varKey} triplet objects (OP:${objectProperties.length}, DP:${dataProperties.length})`);
+    return;
 }
 
 const findProperty = async (vars, endpoint, response, type, varValue) => {
@@ -217,8 +251,7 @@ const findProperty = async (vars, endpoint, response, type, varValue) => {
     } else {
         foundVarKey = Object.keys(vars).find(key => property === vars[key].uri_element);
     }
-
-    return [vars[foundVarKey], property, foundVarKey];
+    return foundVarKey;
 }
 
 const createTripletProperty = (label, key) => ({
