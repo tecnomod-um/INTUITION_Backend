@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const dataFetcher = require('../utils/dataFetcher.js');
+const dataFetcher = require('../services/dataFetcherService.js');
 const maxValues = require('../config/maxValues');
 
 const getVars = async (req, endpoint) => {
@@ -36,6 +36,7 @@ router.get('/:file', async (req, res, next) => {
                 let startTime = Date.now();
                 vars = await getVars(req, endpoint);
                 console.log(vars)
+                
                 if (!req.session.propertiesPromise && !req.session.properties) {
                     req.session.propertiesPromise = dataFetcher.getPropertiesFromSPARQL(vars, endpoint);
                     req.session.save();
@@ -52,6 +53,7 @@ router.get('/:file', async (req, res, next) => {
                 let endTime = Date.now();
                 let timeTaken = endTime - startTime;
                 console.log(`Time taken: ${timeTaken} milliseconds`);
+                
                 break;
 
 

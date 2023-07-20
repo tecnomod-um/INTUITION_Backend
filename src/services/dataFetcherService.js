@@ -1,7 +1,6 @@
 const queries = require('./queries.js');
-const stringUtils = require('./stringUtils.js');
-const w3cTypes = require('../config/typeList');
-const sparqlPetition = require('./sparqlPetitionHandler.js');
+const sparqlPetition = require('./sparqlService.js');
+const stringUtils = require('../utils/stringUtils.js');
 
 const getVarsFromSPARQL = async (endpoint) => {
     try {
@@ -32,13 +31,20 @@ const isValidUri = (uri) => {
 const fetchLabelsForGraphs = async (endpoint, graphURIs) => {
     const vars = {};
     await Promise.all(graphURIs.map(async (uri) => {
-        const labelResponse = await sparqlPetition.executeQuery(endpoint, queries.getLabelForGraph(`<${uri}>`));
         const key = uri.substring(uri.lastIndexOf('/') + 1);
+        const varResponse = await sparqlPetition.executeQuery(endpoint, queries.getVarsFromGraph(uri));
 
-        if (isElementWithoutClassHierarchy(labelResponse)) {
+        if (isElementWithoutClassHierarchy(varResponse)) {
             createVarWithoutClassHierarchy(key, uri, vars);
         } else {
-            createOrUpdateVars(labelResponse, key, uri, vars);
+            const labelPromises = varResponse.results.bindings.map(entry => {
+                const elementUri = entry.VarType?.value || '';
+                return sparqlPetition.executeQuery(endpoint, queries.getLabel(elementUri))
+                    .then(labelResponse => [elementUri, labelResponse.results.bindings[0]?.label?.value || '']);
+            });
+            const labelResults = await Promise.all(labelPromises);
+            const labelMap = Object.fromEntries(labelResults);
+            createOrUpdateVars(varResponse, labelMap, key, uri, vars);
         }
     }));
     return vars;
@@ -56,12 +62,11 @@ const createVarWithoutClassHierarchy = (key, uri, vars) => {
     vars[stringUtils.formatKey(key)] = { label, useGraphOnly, uri_element, uri_graph: uri };
 }
 
-const createOrUpdateVars = (labelResponse, key, uri, vars) => {
-    labelResponse.results.bindings.forEach(binding => {
-        const formattedLabel = stringUtils.formatKey(binding.VarTypeLabel?.value || '');
-        let useGraphOnly = false;
+const createOrUpdateVars = (varResponse, labelMap, key, uri, vars) => {
+    varResponse.results.bindings.forEach((binding, index) => {
         let uri_element = binding.VarType?.value || '';
-        let label = binding.VarTypeLabel?.value || '';
+        let useGraphOnly = false;
+        let label = labelMap[uri_element] || stringUtils.getLastPartUri(uri_element);
 
         if (isTriplet(label, uri_element)) {
             label = key.charAt(0).toUpperCase() + key.slice(1);
@@ -70,18 +75,15 @@ const createOrUpdateVars = (labelResponse, key, uri, vars) => {
             vars[stringUtils.formatKey(label)] = { label, useGraphOnly, uri_element, uri_graph: uri };
             return;
         }
-
+        const formattedLabel = stringUtils.formatKey(label);
         const varContent = { label, useGraphOnly, uri_element, uri_graph: uri };
-
-        if (formattedLabel) {
-            const existingVar = vars[formattedLabel];
-            if (existingVar) {
-                if (existingVar.uri_element !== uri_element) {
-                    handleDuplicates(vars, formattedLabel, varContent);
-                }
-            } else {
-                vars[formattedLabel] = varContent;
+        const existingVar = vars[formattedLabel];
+        if (existingVar) {
+            if (existingVar.uri_element !== uri_element) {
+                handleDuplicates(vars, formattedLabel, varContent);
             }
+        } else {
+            vars[formattedLabel] = varContent;
         }
     });
 }
@@ -93,7 +95,6 @@ const isTriplet = (label, uri_element) => {
 const handleDuplicates = (vars, formattedLabel, newValue) => {
     const oldValue = vars[formattedLabel];
     delete vars[formattedLabel];
-
     vars[`${formattedLabel}_${stringUtils.getDomain(oldValue.uri_element)}`] = oldValue;
     vars[`${formattedLabel}_${stringUtils.getDomain(newValue.uri_element)}`] = newValue;
 }
@@ -104,19 +105,18 @@ const getPropertiesFromSPARQL = async (vars, endpoint) => {
     const dataProperties = {};
     const { triplet, simple } = separateVars(vars);
 
-    // Process simple and triplet elements properties in parallel
     const promiseSimple = Promise.all(Object.entries(simple).map(async ([varKey, varValue]) => {
         objectProperties[varKey] = [];
         dataProperties[varKey] = [];
         return fetchSimpleProperties(varKey, varValue, vars, endpoint, objectProperties[varKey], dataProperties[varKey]);
     }));
-
+    
     const promiseTriplet = Promise.all(Object.entries(triplet).map(async ([varKey, varValue]) => {
         objectProperties[varKey] = [];
         dataProperties[varKey] = [];
         return fetchTripletProperties(varKey, varValue, vars, endpoint, objectProperties[varKey], dataProperties[varKey]);
     }));
-
+    
     await Promise.all([promiseSimple, promiseTriplet]);
 
     return { objectProperties, dataProperties };
@@ -130,36 +130,62 @@ const separateVars = (vars) => {
 }
 
 const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
-    const queryObject = varValue.useGraphOnly
-        ? queries.getPropertiesForGraph(`<${varValue.uri_graph}>`)
-        : queries.getPropertiesForType(`<${varValue.uri_element}>`)
-
-    const propertyResponse = await sparqlPetition.executeQuery(endpoint, queryObject);
+    if (varKey === 'gene') console.log('in gene props');
+    const propertyQueryObject = varValue.useGraphOnly
+        ? queries.getPropertiesForGraph(varValue.uri_graph)
+        : queries.getPropertiesForType(varValue.uri_element);
+    const propertyResponse = await sparqlPetition.executeQuery(endpoint, propertyQueryObject);
     const emptyProps = {};
-    propertyResponse.results.bindings.map(prop => {
-        if (!prop.type?.value) {
-            emptyProps[prop.p.value] = prop;
+
+    const propertyPromises = propertyResponse.results.bindings.map(async (prop) => {
+        const propertySubClassObject = varValue.useGraphOnly
+            ? queries.getPropertySubClassForGraph(varValue.uri_graph, prop.p.value)
+            : queries.getPropertySubClassForType(varValue.uri_element, prop.p.value);
+
+        const subClassResponsePromise = await sparqlPetition.executeQuery(endpoint, propertySubClassObject);
+        const labelResponsePromise = await sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
+
+        // Helper property object
+        const propertyData = {
+            p: prop.p.value,
+            label: labelResponsePromise.results.bindings[0]?.label?.value || '',
+            type: subClassResponsePromise.results.bindings.map(entry => entry.type?.value || '')
+        };
+
+        let result;
+        if (!propertyData.type[0]) {
+            emptyProps[propertyData.p] = propertyData;
         } else {
-            const propObject = createPropertyObject(prop, vars);
-            pushToPropArray(propObject, objectProperties);
+            if (varKey === 'gene') console.log('full prop:');
+            if (varKey === 'gene') console.log(propertyData);
+            propertyData.type.forEach(type => {
+                const propObject = createPropertyObject(propertyData, type, vars);
+                result = pushToPropArray(propObject, objectProperties);
+            });
         }
+
+        return result;
     });
+    await Promise.all(propertyPromises);
+
     // Treat empty properties
     const noValueProps = [];
     if (Object.keys(emptyProps).length > 0) {
+        if (varKey === 'gene') console.log('in empties');
         const allPropURIs = Object.values(emptyProps).map(prop => prop.p.value);
         const allVarURIs = Object.values(vars).map(v => v.uri_element);
         const queryObjectEmpty = varValue.useGraphOnly
-            ? queries.getEmptyPropertiesForGraph(`<${varValue.uri_graph}>`, allPropURIs, allVarURIs)
-            : queries.getEmptyPropertiesForType(`<${varValue.uri_element}>`, allPropURIs, allVarURIs);
+            ? queries.getEmptyPropertiesForGraph(varValue.uri_graph, allPropURIs, allVarURIs)
+            : queries.getEmptyPropertiesForType(varValue.uri_element, allPropURIs, allVarURIs);
 
         const emptyPropertyResponse = await sparqlPetition.executeQuery(endpoint, queryObjectEmpty);
         emptyPropertyResponse.results.bindings.map(prop => {
             if (!prop.basicType?.value) noValueProps.push(prop.p.value);
             else {
-                emptyProps[prop.p.value].type = emptyProps[prop.p.value].type || {};
-                emptyProps[prop.p.value].type.value = prop.basicType.value;
-                const propObject = createPropertyObject(emptyProps[prop.p.value], vars);
+                if (varKey === 'gene') console.log('basic data prop:');
+                if (varKey === 'gene') console.log(emptyProps[prop.p.value]);
+                if (varKey === 'gene') console.log(prop.basicType.value);
+                const propObject = createPropertyObject(emptyProps[prop.p.value], prop.basicType.value, vars);
                 propObject.object ?
                     pushToPropArray(propObject, objectProperties) :
                     pushToPropArray(propObject, dataProperties);
@@ -170,14 +196,14 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
             noValuePropertyResponse.results.bindings.map(prop => {
                 // If no value, it will be treated as an object property for classes without hierarchy
                 if (prop.propertyType.value === 'http://www.w3.org/2002/07/owl#ObjectProperty') {
-                    emptyProps[prop.p.value].type = emptyProps[prop.p.value].type || {};
-                    emptyProps[prop.p.value].type.value = 'http://www.w3.org/2001/XMLSchema#anyURI';
-                    const propObject = createPropertyObject(emptyProps[prop.p.value], vars);
+                    if (varKey === 'gene') console.log('Empty object prop:');
+                    if (varKey === 'gene') console.log(emptyProps[prop.p.value]);
+                    const propObject = createPropertyObject(emptyProps[prop.p.value], 'http://www.w3.org/2001/XMLSchema#anyURI', vars);
                     pushToPropArray(propObject, objectProperties);
                 } else {
-                    emptyProps[prop.p.value].type = emptyProps[prop.p.value].type || {};
-                    emptyProps[prop.p.value].type.value = 'http://www.w3.org/2001/XMLSchema#string';
-                    const propObject = createPropertyObject(emptyProps[prop.p.value], vars);
+                    if (varKey === 'gene') console.log('Empty data prop:');
+                    if (varKey === 'gene') console.log(emptyProps[prop.p.value]);
+                    const propObject = createPropertyObject(emptyProps[prop.p.value], 'http://www.w3.org/2001/XMLSchema#string', vars);
                     pushToPropArray(propObject, dataProperties);
                 }
             });
@@ -187,22 +213,22 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
     return;
 }
 
-const createPropertyObject = (prop, vars) => {
+const createPropertyObject = (propertyData, type, vars) => {
     let propLabel, propValue = '';
-    const objectURI = prop.type?.value;
+    const objectURI = type;
     const foundVarKey = Object.keys(vars).find(key => objectURI === vars[key].uri_element);
     // If the object isn't recognized, the property will allow all classes without hierarchy
     if (foundVarKey)
         propValue = foundVarKey;
-    else propValue = prop.type?.value;
+    else propValue = type;
     const hasOutsideObject = propValue === 'http://www.w3.org/2001/XMLSchema#anyURI';
-    propLabel = prop.name?.value || prop.p.value.substring(prop.p.value.lastIndexOf('/') + 1);
+    propLabel = propertyData.label || propertyData.p.substring(propertyData.p.lastIndexOf('/') + 1);
 
     const result = (foundVarKey || hasOutsideObject) ? {
-        property: prop.p.value,
+        property: propertyData.p,
         label: propLabel,
         object: propValue
-    } : { property: prop.p.value, label: propLabel, type: prop.type?.value || 'http://www.w3.org/2001/XMLSchema#string'};
+    } : { property: propertyData.p, label: propLabel, type: type || 'http://www.w3.org/2001/XMLSchema#string' };
     return result;
 }
 
@@ -216,9 +242,9 @@ const pushToPropArray = (propObject, propArray) => {
 const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
     // Run all three SPARQL queries concurrently.
     const [objectResponse, subjectResponse, dataPropertyResponse] = await Promise.all([
-        sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(`<${varValue.uri_graph}>`, 'object')),
-        sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(`<${varValue.uri_graph}>`, 'subject')),
-        sparqlPetition.executeQuery(endpoint, queries.getDataPropertiesForTriplet(`<${varValue.uri_graph}>`))
+        sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, 'object')),
+        sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, 'subject')),
+        sparqlPetition.executeQuery(endpoint, queries.getDataPropertiesForTriplet(varValue.uri_graph))
     ]);
 
     // Handle object properties
@@ -231,10 +257,18 @@ const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectPr
 
     // Handle data properties
     dataPropertyResponse.results.bindings.map(async (prop) => {
-        if (!prop.p?.value.includes('object') && !prop.p?.value.includes('subject')) {
-            const propObject = createPropertyObject(prop, vars);
-            if (!propObject.object) pushToPropArray(propObject, dataProperties);
-        }
+        const labelResponsePromise = await sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
+
+        // Helper property object
+        const propertyData = {
+            p: prop.p.value,
+            label: labelResponsePromise.results.bindings[0]?.label?.value || '',
+            type: [prop.type?.value || '']
+        };
+
+        const propObject = createPropertyObject(propertyData, prop.type?.value, vars);
+        if (!propObject.object) pushToPropArray(propObject, dataProperties);
+        else pushToPropArray(propObject, objectProperties);
     });
     console.log(`Fetched ${varKey} triplet objects (OP:${objectProperties.length}, DP:${dataProperties.length})`);
     return;
@@ -242,16 +276,12 @@ const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectPr
 
 const findProperty = async (vars, endpoint, response, type, varValue) => {
     let property = response.results.bindings[0]?.[type]?.value;
-    let foundVarKey;
-
+    const target = property ? 'uri_element' : 'uri_graph';
     if (!property) {
-        const missingResponse = await sparqlPetition.executeQuery(endpoint, queries.getMissingElementForTriplet(`<${varValue.uri_graph}>`, type));
+        const missingResponse = await sparqlPetition.executeQuery(endpoint, queries.getMissingElementForTriplet(varValue.uri_graph, type));
         property = missingResponse.results.bindings[0].graph.value;
-        foundVarKey = Object.keys(vars).find(key => property === vars[key].uri_graph);
-    } else {
-        foundVarKey = Object.keys(vars).find(key => property === vars[key].uri_element);
     }
-    return foundVarKey;
+    return Object.keys(vars).find(key => property === vars[key][target]);
 }
 
 const createTripletProperty = (label, key) => ({
@@ -268,8 +298,17 @@ const getNodesFromSPARQL = async (vars, endpoint, limit, totalLimit) => {
     );
     const fullQuery = queries.encapsulateUnion(unionQueries.join(" UNION "));
     const allNodesResponse = await sparqlPetition.executeQuery(endpoint, fullQuery);
-    const allNodes = allNodesResponse.results.bindings;
-    return buildNodes(vars, allNodes, totalLimit);
+
+    const labelResponsePromises = allNodesResponse.results.bindings.map(entry =>
+        sparqlPetition.executeQuery(endpoint, queries.getLabel(entry.node.value)).then(labelResponse => ({
+            node: entry.node.value,
+            label: labelResponse.results.bindings[0]?.label?.value || '',
+            varType: entry.varType.value
+        }))
+    );
+    const nodeList = await Promise.all(labelResponsePromises);
+
+    return buildNodes(vars, nodeList, totalLimit);
 }
 
 const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
@@ -280,14 +319,26 @@ const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
             ? queries.getFilteredByGraph(vars[key].uri_graph, key, limit, sanitizedFilter)
             : queries.getFilteredByType(vars[key].uri_element, key, limit, sanitizedFilter)
     );
+
     const allNodesResponses = await Promise.all(
         filterQueryList.map(query => sparqlPetition.executeQuery(endpoint, query))
     );
-    const allNodes = allNodesResponses.flatMap(response => response.results.bindings);
-    return buildNodes(vars, allNodes, totalLimit);
+    const labelResponsePromises = allNodesResponses.flatMap(response =>
+        response.results.bindings.map(entry =>
+            sparqlPetition.executeQuery(endpoint, queries.getLabel(entry.node.value))
+                .then(labelResponse => ({
+                    node: entry.node.value,
+                    label: labelResponse.results.bindings[0]?.label?.value || '',
+                    varType: entry.varType.value
+                }))
+        )
+    );
+    const nodeList = await Promise.all(labelResponsePromises);
+
+    return buildNodes(vars, nodeList, totalLimit);
 }
 
-const buildNodes = (vars, nodes, totalLimit) => {
+const buildNodes = (vars, nodeList, totalLimit) => {
     const limitPerVarType = Math.floor(totalLimit / Object.keys(vars).length);
     let remaining = totalLimit - limitPerVarType * Object.keys(vars).length;
     const nodesObj = Object.keys(vars).reduce((acc, varType) => {
@@ -295,16 +346,16 @@ const buildNodes = (vars, nodes, totalLimit) => {
         return acc;
     }, {});
 
-    for (let node of nodes) {
-        if (!isValidUri(node.node.value)) continue;
+    for (let nodeEntry of nodeList) {
+        if (!isValidUri(nodeEntry.node)) continue;
 
-        const varType = node.varType.value;
+        const varType = nodeEntry.varType.value;
         const remainingForThisVarType = limitPerVarType - nodesObj[varType].length;
-        const label = node.label?.value;
+        const label = nodeEntry?.label;
 
         if (remainingForThisVarType <= 0 && remaining <= 0) continue;
         nodesObj[varType].push({
-            uri: node.node.value,
+            uri: nodeEntry.node,
             label: label
         });
         if (remainingForThisVarType <= 0 && remaining > 0) {

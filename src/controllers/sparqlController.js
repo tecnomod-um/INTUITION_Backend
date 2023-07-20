@@ -1,5 +1,5 @@
 const axios = require('axios');
-const sparqlPetition = require('../utils/sparqlPetitionHandler.js');
+const sparqlPetition = require('../services/sparqlService.js');
 
 const executeSPARQL = (req, res) => {
   console.log('Got SPARQL query:', req.body);
