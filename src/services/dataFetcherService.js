@@ -118,7 +118,6 @@ const getPropertiesFromSPARQL = async (vars, endpoint) => {
     }));
     
     await Promise.all([promiseSimple, promiseTriplet]);
-
     return { objectProperties, dataProperties };
 }
 
@@ -130,87 +129,81 @@ const separateVars = (vars) => {
 }
 
 const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
-    if (varKey === 'gene') console.log('in gene props');
+    if (varKey === 'crm') return;
+    // TODO change server settings to allow crm fetching
     const propertyQueryObject = varValue.useGraphOnly
         ? queries.getPropertiesForGraph(varValue.uri_graph)
         : queries.getPropertiesForType(varValue.uri_element);
     const propertyResponse = await sparqlPetition.executeQuery(endpoint, propertyQueryObject);
     const emptyProps = {};
+    const noValueProps = [];
 
     const propertyPromises = propertyResponse.results.bindings.map(async (prop) => {
         const propertySubClassObject = varValue.useGraphOnly
             ? queries.getPropertySubClassForGraph(varValue.uri_graph, prop.p.value)
             : queries.getPropertySubClassForType(varValue.uri_element, prop.p.value);
 
-        const subClassResponsePromise = await sparqlPetition.executeQuery(endpoint, propertySubClassObject);
-        const labelResponsePromise = await sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
+        const subClassResponsePromise = sparqlPetition.executeQuery(endpoint, propertySubClassObject);
+        const labelResponsePromise = sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
+        const [subClassResponse, labelResponse] = await Promise.all([subClassResponsePromise, labelResponsePromise]);
 
-        // Helper property object
         const propertyData = {
             p: prop.p.value,
-            label: labelResponsePromise.results.bindings[0]?.label?.value || '',
-            type: subClassResponsePromise.results.bindings.map(entry => entry.type?.value || '')
+            label: labelResponse.results.bindings[0]?.label?.value || '',
+            type: subClassResponse.results.bindings.map(entry => entry.type?.value || '')
         };
 
-        let result;
         if (!propertyData.type[0]) {
             emptyProps[propertyData.p] = propertyData;
-        } else {
-            if (varKey === 'gene') console.log('full prop:');
-            if (varKey === 'gene') console.log(propertyData);
-            propertyData.type.forEach(type => {
-                const propObject = createPropertyObject(propertyData, type, vars);
-                result = pushToPropArray(propObject, objectProperties);
-            });
+            return;
         }
 
-        return result;
+        return propertyData.type.map(type => {
+            const propObject = createPropertyObject(propertyData, type, vars);
+            return pushToPropArray(propObject, objectProperties);
+        });
     });
     await Promise.all(propertyPromises);
 
     // Treat empty properties
-    const noValueProps = [];
     if (Object.keys(emptyProps).length > 0) {
-        if (varKey === 'gene') console.log('in empties');
-        const allPropURIs = Object.values(emptyProps).map(prop => prop.p.value);
         const allVarURIs = Object.values(vars).map(v => v.uri_element);
-        const queryObjectEmpty = varValue.useGraphOnly
-            ? queries.getEmptyPropertiesForGraph(varValue.uri_graph, allPropURIs, allVarURIs)
-            : queries.getEmptyPropertiesForType(varValue.uri_element, allPropURIs, allVarURIs);
+        const emptyPropertyPromises = Object.keys(emptyProps).map(async (uri) => {
+            const queryObjectEmpty = varValue.useGraphOnly
+                ? queries.getEmptyPropertiesForGraph(varValue.uri_graph, uri)
+                : queries.getEmptyPropertiesForType(varValue.uri_element, uri);
 
-        const emptyPropertyResponse = await sparqlPetition.executeQuery(endpoint, queryObjectEmpty);
-        emptyPropertyResponse.results.bindings.map(prop => {
-            if (!prop.basicType?.value) noValueProps.push(prop.p.value);
-            else {
-                if (varKey === 'gene') console.log('basic data prop:');
-                if (varKey === 'gene') console.log(emptyProps[prop.p.value]);
-                if (varKey === 'gene') console.log(prop.basicType.value);
-                const propObject = createPropertyObject(emptyProps[prop.p.value], prop.basicType.value, vars);
-                propObject.object ?
-                    pushToPropArray(propObject, objectProperties) :
-                    pushToPropArray(propObject, dataProperties);
-            }
-        });
-        if (noValueProps.length > 0) {
-            const noValuePropertyResponse = await sparqlPetition.executeQuery(endpoint, queries.getPropertyType(noValueProps));
-            noValuePropertyResponse.results.bindings.map(prop => {
-                // If no value, it will be treated as an object property for classes without hierarchy
-                if (prop.propertyType.value === 'http://www.w3.org/2002/07/owl#ObjectProperty') {
-                    if (varKey === 'gene') console.log('Empty object prop:');
-                    if (varKey === 'gene') console.log(emptyProps[prop.p.value]);
-                    const propObject = createPropertyObject(emptyProps[prop.p.value], 'http://www.w3.org/2001/XMLSchema#anyURI', vars);
-                    pushToPropArray(propObject, objectProperties);
-                } else {
-                    if (varKey === 'gene') console.log('Empty data prop:');
-                    if (varKey === 'gene') console.log(emptyProps[prop.p.value]);
-                    const propObject = createPropertyObject(emptyProps[prop.p.value], 'http://www.w3.org/2001/XMLSchema#string', vars);
-                    pushToPropArray(propObject, dataProperties);
+            const emptyPropertyResponse = await sparqlPetition.executeQuery(endpoint, queryObjectEmpty);
+
+            emptyPropertyResponse.results.bindings.map(prop => {
+                if (!prop.basicType?.value && !(prop.o?.value && allVarURIs.includes(prop.o.value))) {
+                    noValueProps.push(prop.p.value);
+                    return;
                 }
+
+                const target = prop.basicType?.value || prop.o.value;
+                const propObject = createPropertyObject(emptyProps[prop.p.value], target, vars);
+                pushToPropArray(propObject, propObject.object ? objectProperties : dataProperties);
             });
-        }
+        });
+        await Promise.all(emptyPropertyPromises);
+    }
+
+    if (noValueProps.length > 0) {
+        const noValuePropertyPromises = noValueProps.map(async (noValueProp) => {
+            const noValuePropertyResponse = await sparqlPetition.executeQuery(endpoint, queries.getPropertyType([noValueProp]));
+            noValuePropertyResponse.results.bindings.map(prop => {
+                const propObject = createPropertyObject(
+                    emptyProps[prop.p.value],
+                    prop.propertyType.value === 'http://www.w3.org/2002/07/owl#ObjectProperty' ? 'http://www.w3.org/2001/XMLSchema#anyURI' : 'http://www.w3.org/2001/XMLSchema#string',
+                    vars
+                );
+                pushToPropArray(propObject, propObject.object ? objectProperties : dataProperties);
+            });
+        });
+        await Promise.all(noValuePropertyPromises);
     }
     console.log(`Fetched ${varKey} simple objects (OP:${objectProperties.length}, DP:${dataProperties.length})`);
-    return;
 }
 
 const createPropertyObject = (propertyData, type, vars) => {

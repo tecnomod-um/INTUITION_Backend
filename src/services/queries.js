@@ -29,12 +29,12 @@ const getVarsFromGraph = (graph) => {
             }
         
             FILTER NOT EXISTS {
-                ?VarType <http://www.w3.org/2002/07/owl#someValuesFrom> ?VarParent .
-                FILTER(?VarParent != ?VarType)
+                ?VarType <http://www.w3.org/2002/07/owl#someValuesFrom> ?VarParentValues .
+                FILTER(?VarParentValues != ?VarType)
             }
             FILTER NOT EXISTS {
-                ?VarType <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?VarParent .
-                FILTER(?VarParent != ?VarType)
+                ?VarType <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?VarParentClass .
+                FILTER(?VarParentClass != ?VarType)
             }
         }
     }
@@ -95,41 +95,34 @@ const getPropertySubClassForGraph = (graph, property) => {
     `);
 }
 
-const getEmptyPropertiesForType = (type, emptyProperties, additionalURIs) => {
-    const emptyPropertiesString = emptyProperties.map(uri => `<${uri}>`).join(' ');
-    const additionalURIsString = additionalURIs.map(uri => `<${uri}>`).join(' ');
-
+const getEmptyPropertiesForType = (type, emptyProperty) => {
     return (`
-      SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), IF(?o IN (?additionalUris), str(?o), "")) AS ?basicType) WHERE {
-        ?s ?p ?o .
+    SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), "") AS ?basicType) ?o WHERE {
         ?s ?Property <${type}> .
+        ?s <${emptyProperty}> ?o .
+        BIND(<${emptyProperty}> AS ?p)
 
         VALUES ?Property {
             <http://www.w3.org/2002/07/owl#someValuesFrom> 
             <http://www.w3.org/2000/01/rdf-schema#subClassOf>
         }
-        VALUES ?p { ${emptyPropertiesString} }
-        VALUES ?additionalUris { ${additionalURIsString} }
-    }
+    } LIMIT 1
     `);
 }
 
-const getEmptyPropertiesForGraph = (graph, emptyProperties, additionalURIs) => {
-    const emptyPropertiesString = emptyProperties.map(uri => `<${uri}>`).join(' ');
-    const additionalURIsString = additionalURIs.map(uri => `<${uri}>`).join(' ');
+const getEmptyPropertiesForGraph = (graph, emptyProperty) => {
     return (`
-    SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), IF(?o IN (?additionalUris), str(?o), "")) AS ?basicType) WHERE {
+    SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), "") AS ?basicType) ?o WHERE {
         GRAPH <${graph}> {
-            ?s ?p ?o .
+            ?s <${emptyProperty}> ?o .
+            BIND(<${emptyProperty}> AS ?p)
 
             VALUES ?Property {
                 <http://www.w3.org/2002/07/owl#someValuesFrom> 
                 <http://www.w3.org/2000/01/rdf-schema#subClassOf>
             }
-            VALUES ?p { ${emptyPropertiesString} }
-            VALUES ?additionalUris { ${additionalURIsString} }
         }
-    }
+    } LIMIT 1
     `);
 }
 

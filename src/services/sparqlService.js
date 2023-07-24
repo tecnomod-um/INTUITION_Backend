@@ -1,4 +1,5 @@
 const axios = require('axios');
+const axiosRetry = require('axios-retry');
 
 const executeQuery = async (endpoint, query) => {
     let startTime = Date.now();
@@ -12,20 +13,17 @@ const executeQuery = async (endpoint, query) => {
         data: {
             query,
         },
-    };
-
+    }
     try {
+        axiosRetry(axios, { retries: 3 });
         const response = await axios.request(options);
         return response.data;
-        let endTime = Date.now();
-        let timeTaken = endTime - startTime;
-        console.log(`Time taken: ${timeTaken} milliseconds`);
     } catch (error) {
-        let endTime = Date.now();
-        let timeTaken = endTime - startTime;
+        const endTime = Date.now();
+        const timeTaken = endTime - startTime;
         console.log(`Time taken: ${timeTaken} milliseconds`);
+        console.log(query)
         console.error("Error while executing query:", error.message);
-        console.error(query);
         if (error.response && error.response.data) {
             console.error("Response body:", error.response.data);
         }
