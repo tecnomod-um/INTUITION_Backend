@@ -179,8 +179,6 @@ const getDataPropertiesForTriplet = (graph) => {
 
             BIND(datatype(?o) AS ?type)
         }
-        FILTER (?p != <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> && 
-                ?p != <http://www.w3.org/1999/02/22-rdf-syntax-ns#object>)
     }
     `);
 }
@@ -227,29 +225,16 @@ const getNodesByGraph = (graph, varKey, limit) => {
     `);
 }
 
-const encapsulateUnion = (union) => {
-    return (`
-    SELECT DISTINCT * WHERE
-    {
-        ${union}
-    }
-    `);
-}
-
 const getFilteredByType = (type, varKey, limit, filter) => {
     const queryLimit = limit ? ` LIMIT ${limit}` : "";
     return (`
-    SELECT DISTINCT ?node ?varType WHERE {
+    SELECT DISTINCT ?node "${varKey}" AS ?varType WHERE {
         ?node ?property <${type}> .
-
-        FILTER(CONTAINS(LCASE(str(?label)), "${filter}") || CONTAINS(LCASE(str(?node)), "${filter}") || CONTAINS(LCASE(str(?varType)), "${filter}")) .
-        
         VALUES ?property {
-                    <http://www.w3.org/2002/07/owl#someValuesFrom> 
-                    <http://www.w3.org/2000/01/rdf-schema#subClassOf>
+            <http://www.w3.org/2002/07/owl#someValuesFrom> 
+            <http://www.w3.org/2000/01/rdf-schema#subClassOf>
         }
-        
-        BIND("${varKey}" AS ?varType)
+        FILTER(CONTAINS(str(?node), "${filter}") || CONTAINS(str(?varType), "${filter}")) .
     }${queryLimit}
     `);
 }
@@ -257,26 +242,22 @@ const getFilteredByType = (type, varKey, limit, filter) => {
 const getFilteredByGraph = (graph, varKey, limit, filter) => {
     const queryLimit = limit ? ` LIMIT ${limit}` : "";
     return (`
-    SELECT DISTINCT ?node ?varType WHERE {
+    SELECT DISTINCT ?node "${varKey}" AS ?varType WHERE {
         GRAPH <${graph}> {
-                ?node ?property ?o .
-                
-                BIND("${varKey}" AS ?varType)
-
-                FILTER NOT EXISTS {
-                    ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent .
-                    FILTER(?o != ?parent)
-                }
-                FILTER NOT EXISTS {
-                    ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent .
-                    FILTER(?o != ?parent)
-                }
-                FILTER NOT EXISTS {
-                    ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent .
-                    FILTER(?o != ?parent)
-                }
-                
-                FILTER(CONTAINS(LCASE(str(?label)), "${filter}") || CONTAINS(LCASE(str(?node)), "${filter}") || CONTAINS(LCASE(str(?varType)), "${filter}")) .
+            ?node ?property ?o .
+            FILTER NOT EXISTS {
+                ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent .
+                FILTER(?o != ?parent)
+            }
+            FILTER NOT EXISTS {
+                ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent .
+                FILTER(?o != ?parent)
+            }
+            FILTER NOT EXISTS {
+                ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent .
+                FILTER(?o != ?parent)
+            }
+            FILTER(CONTAINS(str(?node), "${filter}") || CONTAINS(str(?varType), "${filter}")) .
         }
     }${queryLimit}
     `);
@@ -297,7 +278,6 @@ module.exports = {
     getNodesByGraph,
     getFilteredByType,
     getFilteredByGraph,
-    encapsulateUnion,
     getEmptyPropertiesForType,
     getEmptyPropertiesForGraph,
     getPropertyType,

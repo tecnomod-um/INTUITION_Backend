@@ -29,6 +29,7 @@ router.get('/:file', async (req, res, next) => {
     let fileContent;
     const { file } = req.params;
     const endpoint = req.headers['x-sparql-endpoint'];
+    let vars;
     try {
         switch (file) {
             case 'vars':
@@ -36,7 +37,7 @@ router.get('/:file', async (req, res, next) => {
                 break;
 
             case 'properties':
-                const vars = await getVars(req, endpoint);
+                vars = await getVars(req, endpoint);
                 console.log(vars);
                 if (!req.session.propertiesPromise && !req.session.properties) {
                     req.session.propertiesPromise = dataFetcher.getPropertiesFromSPARQL(vars, endpoint);
@@ -48,13 +49,11 @@ router.get('/:file', async (req, res, next) => {
                     req.session.properties = properties;
                     req.session.save();
                 }
-
                 fileContent = req.session.properties;
                 break;
                 
             case 'nodes':
-                /*
-                const vars = await getVars(req, endpoint);
+                vars = await getVars(req, endpoint);
                 const { filter } = req.query;
                 if (!filter || filter.length < 3) {
                     // Fetch stock nodes
@@ -71,7 +70,7 @@ router.get('/:file', async (req, res, next) => {
                     fileContent = req.session.nodes;
                 } else
                     fileContent = await dataFetcher.getFilteredNodes(vars, endpoint, maxValues.node, filter, maxValues.total);
-                */
+                
                 break;
         }
         res.setHeader('Content-Type', 'application/json');

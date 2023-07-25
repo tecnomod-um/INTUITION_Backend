@@ -110,13 +110,13 @@ const getPropertiesFromSPARQL = async (vars, endpoint) => {
         dataProperties[varKey] = [];
         return fetchSimpleProperties(varKey, varValue, vars, endpoint, objectProperties[varKey], dataProperties[varKey]);
     }));
-    
+
     const promiseTriplet = Promise.all(Object.entries(triplet).map(async ([varKey, varValue]) => {
         objectProperties[varKey] = [];
         dataProperties[varKey] = [];
         return fetchTripletProperties(varKey, varValue, vars, endpoint, objectProperties[varKey], dataProperties[varKey]);
     }));
-    
+
     await Promise.all([promiseSimple, promiseTriplet]);
     return { objectProperties, dataProperties };
 }
@@ -129,8 +129,6 @@ const separateVars = (vars) => {
 }
 
 const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
-    if (varKey === 'crm') return;
-    // TODO change server settings to allow crm fetching
     const propertyQueryObject = varValue.useGraphOnly
         ? queries.getPropertiesForGraph(varValue.uri_graph)
         : queries.getPropertiesForType(varValue.uri_element);
@@ -233,13 +231,11 @@ const pushToPropArray = (propObject, propArray) => {
 }
 
 const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
-    // Run all three SPARQL queries concurrently.
     const [objectResponse, subjectResponse, dataPropertyResponse] = await Promise.all([
         sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, 'object')),
         sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, 'subject')),
-        sparqlPetition.executeQuery(endpoint, queries.getDataPropertiesForTriplet(varValue.uri_graph))
+        sparqlPetition.executeQuery(endpoint, queries.getPropertiesForGraph(varValue.uri_graph))
     ]);
-
     // Handle object properties
     const [foundObject, foundSubject] = await Promise.all([
         findProperty(vars, endpoint, objectResponse, 'object', varValue),
@@ -247,25 +243,28 @@ const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectPr
     ]);
     if (foundObject) objectProperties.push(createTripletProperty('object', foundObject));
     if (foundSubject) objectProperties.push(createTripletProperty('subject', foundSubject));
-
     // Handle data properties
-    dataPropertyResponse.results.bindings.map(async (prop) => {
-        const labelResponsePromise = await sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
+    const dataPropertyPromises = dataPropertyResponse.results.bindings.map(async (prop) => {
+        if (prop.p.value === '<http://www.w3.org/1999/02/22-rdf-syntax-ns#subject>'
+            || prop.p.value === '<http://www.w3.org/1999/02/22-rdf-syntax-ns#object>') return;
+
+        const labelResponse = await sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
 
         // Helper property object
         const propertyData = {
             p: prop.p.value,
-            label: labelResponsePromise.results.bindings[0]?.label?.value || '',
+            label: labelResponse.results.bindings[0]?.label?.value || '',
             type: [prop.type?.value || '']
         };
-
         const propObject = createPropertyObject(propertyData, prop.type?.value, vars);
         if (!propObject.object) pushToPropArray(propObject, dataProperties);
         else pushToPropArray(propObject, objectProperties);
     });
+    await Promise.all(dataPropertyPromises);
     console.log(`Fetched ${varKey} triplet objects (OP:${objectProperties.length}, DP:${dataProperties.length})`);
     return;
 }
+
 
 const findProperty = async (vars, endpoint, response, type, varValue) => {
     let property = response.results.bindings[0]?.[type]?.value;
@@ -284,15 +283,17 @@ const createTripletProperty = (label, key) => ({
 })
 
 const getNodesFromSPARQL = async (vars, endpoint, limit, totalLimit) => {
-    const unionQueries = Object.keys(vars).map(key =>
+    const individualQueries = Object.keys(vars).map(key =>
         vars[key].useGraphOnly
-            ? `{${queries.getNodesByGraph(vars[key].uri_graph, key, limit)}}`
-            : `{${queries.getNodesByType(vars[key].uri_element, key, limit)}}`
+            ? queries.getNodesByGraph(vars[key].uri_graph, key, limit)
+            : queries.getNodesByType(vars[key].uri_element, key, limit)
     );
-    const fullQuery = queries.encapsulateUnion(unionQueries.join(" UNION "));
-    const allNodesResponse = await sparqlPetition.executeQuery(endpoint, fullQuery);
+    const allNodesResponses = await Promise.all(
+        individualQueries.map(query => sparqlPetition.executeQuery(endpoint, query))
+    );
+    const allNodes = allNodesResponses.reduce((acc, response) => acc.concat(response.results.bindings), []);
 
-    const labelResponsePromises = allNodesResponse.results.bindings.map(entry =>
+    const labelResponsePromises = allNodes.map(entry =>
         sparqlPetition.executeQuery(endpoint, queries.getLabel(entry.node.value)).then(labelResponse => ({
             node: entry.node.value,
             label: labelResponse.results.bindings[0]?.label?.value || '',
@@ -305,7 +306,7 @@ const getNodesFromSPARQL = async (vars, endpoint, limit, totalLimit) => {
 }
 
 const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
-    console.log("in filter")
+    console.log('in filter')
     const sanitizedFilter = stringUtils.sanitizeInput(filter.toLowerCase());
     const filterQueryList = Object.keys(vars).map(key =>
         vars[key].useGraphOnly
@@ -342,12 +343,14 @@ const buildNodes = (vars, nodeList, totalLimit) => {
     for (let nodeEntry of nodeList) {
         if (!isValidUri(nodeEntry.node)) continue;
 
-        const varType = nodeEntry.varType.value;
-        const remainingForThisVarType = limitPerVarType - nodesObj[varType].length;
+        const varType = nodeEntry.varType;
+        const existingNodesArray = nodesObj[varType];
+
+        const remainingForThisVarType = limitPerVarType - existingNodesArray.length;
         const label = nodeEntry?.label;
 
         if (remainingForThisVarType <= 0 && remaining <= 0) continue;
-        nodesObj[varType].push({
+        existingNodesArray.push({
             uri: nodeEntry.node,
             label: label
         });
