@@ -158,7 +158,8 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
 
         return propertyData.type.map(type => {
             const propObject = createPropertyObject(propertyData, type, vars);
-            return pushToPropArray(propObject, objectProperties);
+            if (propObject.object) pushToPropArray(propObject, objectProperties);
+            else pushToPropArray(propObject, dataProperties);
         });
     });
     await Promise.all(propertyPromises);
@@ -181,7 +182,8 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
 
                 const target = prop.basicType?.value || prop.o.value;
                 const propObject = createPropertyObject(emptyProps[prop.p.value], target, vars);
-                pushToPropArray(propObject, propObject.object ? objectProperties : dataProperties);
+                if (propObject.object) pushToPropArray(propObject, objectProperties);
+                else pushToPropArray(propObject, dataProperties);
             });
         });
         await Promise.all(emptyPropertyPromises);
@@ -196,7 +198,8 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
                     prop.propertyType.value === 'http://www.w3.org/2002/07/owl#ObjectProperty' ? 'http://www.w3.org/2001/XMLSchema#anyURI' : 'http://www.w3.org/2001/XMLSchema#string',
                     vars
                 );
-                pushToPropArray(propObject, propObject.object ? objectProperties : dataProperties);
+                if (propObject.object) pushToPropArray(propObject, objectProperties);
+                else pushToPropArray(propObject, dataProperties);
             });
         });
         await Promise.all(noValuePropertyPromises);
