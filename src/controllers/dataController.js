@@ -6,7 +6,6 @@ const promiseCache = {};
 
 const getVars = async (req, endpoint) => {
     let vars;
-
     if (!req.session.vars) {
         // If there is a promise in cache for this endpoint, wait for it
         if (promiseCache[endpoint]) {
@@ -51,7 +50,7 @@ router.get('/:file', async (req, res, next) => {
                 }
                 fileContent = req.session.properties;
                 break;
-                
+
             case 'nodes':
                 vars = await getVars(req, endpoint);
                 const { filter } = req.query;
@@ -70,8 +69,9 @@ router.get('/:file', async (req, res, next) => {
                     fileContent = req.session.nodes;
                 } else
                     fileContent = await dataFetcher.getFilteredNodes(vars, endpoint, maxValues.node, filter, maxValues.total);
-                
                 break;
+            default:
+                throw new Error(`Invalid file parameter: ${file}`);
         }
         res.setHeader('Content-Type', 'application/json');
         res.json(fileContent);
