@@ -1,4 +1,5 @@
 module.exports = {
     node: 100,
     total: 500,
+    batch_size: 100
 }

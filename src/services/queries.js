@@ -16,6 +16,18 @@ const getLabel = (element) => {
     }
     `);
 }
+const getLabelsBatch = (uris) => {
+    const values = uris.map(uri => `<${uri}>`).join(' ');
+    return (`
+      SELECT ?uri ?label WHERE {
+        VALUES ?uri { ${values} }
+        OPTIONAL { ?uri <http://www.w3.org/2000/01/rdf-schema#label> ?rdfsLabel } .
+        OPTIONAL { ?uri <http://www.w3.org/2004/02/skos/core#prefLabel> ?prefLabel } .
+        OPTIONAL { ?uri <http://www.w3.org/2004/02/skos/core#altLabel> ?altLabel } .
+        BIND(COALESCE(?rdfsLabel, ?prefLabel, ?altLabel) AS ?label)
+      }
+    `);
+  }
 
 const getVarsFromGraph = (graph) => {
     return (`
@@ -266,6 +278,7 @@ const getFilteredByGraph = (graph, varKey, limit, filter) => {
 module.exports = {
     getAllGraphs,
     getLabel,
+    getLabelsBatch,
     getVarsFromGraph,
     getPropertiesForType,
     getPropertiesForGraph,
