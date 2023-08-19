@@ -18,7 +18,6 @@ const executeSPARQL = async (req, res) => {
 
 const fetchQueryLabels = async (endpoint, responseData) => {
   console.log("Fetching required labels");
-
   const urisToFetch = [];
   responseData.results.bindings.forEach(binding => {
     Object.entries(binding).forEach(([key, value]) => {
@@ -27,10 +26,8 @@ const fetchQueryLabels = async (endpoint, responseData) => {
       }
     });
   });
-
   const uniqueUris = [...new Set(urisToFetch)];
   const fetchedLabels = new Map();
-
   for (let i = 0; i < uniqueUris.length; i += maxValues.batch_size) {
     const currentBatch = uniqueUris.slice(i, i + maxValues.batch_size);
     const batchFetchedLabels = await fetchLabelsBatch(endpoint, currentBatch);
@@ -66,11 +63,9 @@ const fetchLabelsBatch = async (endpoint, uris) => {
   } catch (error) {
     console.error('Failed to fetch labels batch:', error);
   }
-
-  // Ensure every URI in the batch has an entry in the map, even if no label was fetched
   uris.forEach(uri => {
     if (!fetchedLabels.has(uri)) {
-      fetchedLabels.set(uri, ''); // Set empty label for URIs with no fetched label
+      fetchedLabels.set(uri, '');
     }
   });
 

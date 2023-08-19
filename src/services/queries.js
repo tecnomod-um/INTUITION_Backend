@@ -16,6 +16,7 @@ const getLabel = (element) => {
     }
     `);
 }
+
 const getLabelsBatch = (uris) => {
     const values = uris.map(uri => `<${uri}>`).join(' ');
     return (`
