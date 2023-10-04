@@ -169,8 +169,6 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
             fromInstance: prop.fromInstance
         };
 
-        //if (varKey === 'crm' && prop.fromInstance && prop.p.value === 'http://semanticscience.org/resource/SIO_000253') console.log(subClassResponse.results.bindings);
-
         if (!propertyData.type[0]) {
             emptyProps[propertyData.p] = propertyData;
             return;
