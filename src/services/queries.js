@@ -28,7 +28,7 @@ const getLabelsBatch = (uris) => {
         BIND(COALESCE(?rdfsLabel, ?prefLabel, ?altLabel) AS ?label)
       }
     `);
-  }
+}
 
 const getVarsFromGraph = (graph) => {
     return (`
@@ -57,8 +57,8 @@ const getVarsFromGraph = (graph) => {
 const getPropertiesForType = (type) => {
     return (`
     SELECT DISTINCT ?p WHERE {
-        ?s ?p ?o .
         ?s ?Property <${type}> .
+        ?s ?p ?o .
 
         VALUES ?Property {
             <http://www.w3.org/2002/07/owl#someValuesFrom> 
@@ -72,48 +72,92 @@ const getPropertiesForGraph = (graph) => {
     return (`
     SELECT DISTINCT ?p WHERE {
         GRAPH <${graph}> {
-            ?s ?p ?o .
+                ?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+                ?class ?p ?o .
         }
     }
     `);
 }
 
-const getPropertySubClassForType = (type, property) => {
+const getInstancePropertiesForType = (type) => {
+    return (`
+    SELECT DISTINCT ?p WHERE {
+        ?s ?Property <${type}> .
+        ?typeInstance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?s .
+        ?typeInstance ?p ?o .
+
+        VALUES ?Property {
+            <http://www.w3.org/2002/07/owl#someValuesFrom>
+            <http://www.w3.org/2000/01/rdf-schema#subClassOf>
+        }
+    }
+    `);
+}
+
+const getInstancePropertiesForGraph = (graph) => {
+    return (`
+    SELECT DISTINCT ?p WHERE {
+        GRAPH <${graph}> {
+            ?graphInstance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?class .
+            ?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+            ?inst ?p ?o
+        }
+    }
+    `);
+}
+
+const getQuerySubject = (useGraphOnly, fromInstance, property) => {
+    if (useGraphOnly) {
+        if (fromInstance) {
+            return `?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?class .\n?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .`;
+        } else {
+            return `?s <${property}> ?o .`;
+        }
+    } else {
+        if (fromInstance) {
+            return `?typeInstance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?s .\n?typeInstance <${property}> ?o .`;
+        } else {
+            return `?s <${property}> ?o .`;
+        }
+    }
+}
+
+const getPropertySubClassForType = (type, property, fromInstance) => {
+    const subject = getQuerySubject(false, fromInstance, property);
     return (`
     SELECT DISTINCT ?p ?type WHERE {
         BIND(<${property}> AS ?p)
-        ?s <${property}> ?o .
-
         ?s ?Property <${type}> .
-
+        ${subject}
         VALUES ?Property {
-            <http://www.w3.org/2002/07/owl#someValuesFrom> 
+            <http://www.w3.org/2002/07/owl#someValuesFrom>
             <http://www.w3.org/2000/01/rdf-schema#subClassOf>
         }
-
         OPTIONAL { ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?type }
     }
     `);
 }
 
-const getPropertySubClassForGraph = (graph, property) => {
+const getPropertySubClassForGraph = (graph, property, fromInstance) => {
+    const subject = getQuerySubject(true, fromInstance, property);
     return (`
     SELECT DISTINCT ?p ?type WHERE {
         GRAPH <${graph}> {
-            ?s <${property}> ?o .
-
+            BIND(<${property}> AS ?p)
+            ${subject}
             OPTIONAL { ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?type }
         }
     }
     `);
 }
 
-const getEmptyPropertiesForType = (type, emptyProperty) => {
+const getEmptyPropertiesForType = (type, emptyProperty, fromInstance) => {
+    const subject = getQuerySubject(false, fromInstance, emptyProperty);
     return (`
     SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), "") AS ?basicType) ?o WHERE {
-        ?s ?Property <${type}> .
-        ?s <${emptyProperty}> ?o .
         BIND(<${emptyProperty}> AS ?p)
+        ?s ?Property <${type}> .
+        ${subject}
 
         VALUES ?Property {
             <http://www.w3.org/2002/07/owl#someValuesFrom> 
@@ -123,12 +167,13 @@ const getEmptyPropertiesForType = (type, emptyProperty) => {
     `);
 }
 
-const getEmptyPropertiesForGraph = (graph, emptyProperty) => {
+const getEmptyPropertiesForGraph = (graph, emptyProperty, fromInstance) => {
+    const subject = getQuerySubject(true, fromInstance, emptyProperty);
     return (`
     SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), "") AS ?basicType) ?o WHERE {
         GRAPH <${graph}> {
-            ?s <${emptyProperty}> ?o .
             BIND(<${emptyProperty}> AS ?p)
+            ${subject}
 
             VALUES ?Property {
                 <http://www.w3.org/2002/07/owl#someValuesFrom> 
@@ -283,6 +328,8 @@ module.exports = {
     getVarsFromGraph,
     getPropertiesForType,
     getPropertiesForGraph,
+    getInstancePropertiesForType,
+    getInstancePropertiesForGraph,
     getPropertySubClassForType,
     getPropertySubClassForGraph,
     getElementForTriplet,

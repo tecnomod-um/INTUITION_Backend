@@ -129,18 +129,35 @@ const separateVars = (vars) => {
 }
 
 const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
-    const propertyQueryObject = varValue.useGraphOnly
+
+    const propertyGeneralQueryObject = varValue.useGraphOnly
         ? queries.getPropertiesForGraph(varValue.uri_graph)
         : queries.getPropertiesForType(varValue.uri_element);
-    const propertyResponse = await sparqlPetition.executeQuery(endpoint, propertyQueryObject);
+    const propertyInstanceQueryObject = varValue.useGraphOnly
+        ? queries.getInstancePropertiesForGraph(varValue.uri_graph)
+        : queries.getInstancePropertiesForType(varValue.uri_element);
+
+    const processResponse = (response, fromInstance) => response.results.bindings.map(prop => ({ ...prop, fromInstance: fromInstance }));
+
+    const [propertyGeneralResponse, propertyInstanceResponse] = await Promise.all([
+        sparqlPetition.executeQuery(endpoint, propertyGeneralQueryObject),
+        sparqlPetition.executeQuery(endpoint, propertyInstanceQueryObject)
+    ]);
+
+    const bindings = [
+        ...processResponse(propertyGeneralResponse, false),
+        ...processResponse(propertyInstanceResponse, true)
+    ];
+
+    const responses = { results: { bindings } };
+
     const emptyProps = {};
     const noValueProps = [];
 
-    const propertyPromises = propertyResponse.results.bindings.map(async (prop) => {
+    const propertyPromises = responses.results.bindings.map(async (prop) => {
         const propertySubClassObject = varValue.useGraphOnly
-            ? queries.getPropertySubClassForGraph(varValue.uri_graph, prop.p.value)
-            : queries.getPropertySubClassForType(varValue.uri_element, prop.p.value);
-
+            ? queries.getPropertySubClassForGraph(varValue.uri_graph, prop.p.value, prop.fromInstance)
+            : queries.getPropertySubClassForType(varValue.uri_element, prop.p.value, prop.fromInstance);
         const subClassResponsePromise = sparqlPetition.executeQuery(endpoint, propertySubClassObject);
         const labelResponsePromise = sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
         const [subClassResponse, labelResponse] = await Promise.all([subClassResponsePromise, labelResponsePromise]);
@@ -148,8 +165,11 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
         const propertyData = {
             p: prop.p.value,
             label: labelResponse.results.bindings[0]?.label?.value || '',
-            type: subClassResponse.results.bindings.map(entry => entry.type?.value || '')
+            type: subClassResponse.results.bindings.map(entry => entry.type?.value || ''),
+            fromInstance: prop.fromInstance
         };
+
+        //if (varKey === 'crm' && prop.fromInstance && prop.p.value === 'http://semanticscience.org/resource/SIO_000253') console.log(subClassResponse.results.bindings);
 
         if (!propertyData.type[0]) {
             emptyProps[propertyData.p] = propertyData;
@@ -157,11 +177,12 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
         }
 
         return propertyData.type.map(type => {
-            const propObject = createPropertyObject(propertyData, type, vars);
+            const propObject = createPropertyObject(propertyData, type, vars, prop.fromInstance);
             if (propObject.object) pushToPropArray(propObject, objectProperties);
             else pushToPropArray(propObject, dataProperties);
         });
     });
+
     await Promise.all(propertyPromises);
 
     // Treat empty properties
@@ -179,7 +200,6 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
                     noValueProps.push(prop.p.value);
                     return;
                 }
-
                 const target = prop.basicType?.value || prop.o.value;
                 const propObject = createPropertyObject(emptyProps[prop.p.value], target, vars);
                 if (propObject.object) pushToPropArray(propObject, objectProperties);
@@ -207,7 +227,7 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
     console.log(`Fetched ${varKey} simple objects (OP:${objectProperties.length}, DP:${dataProperties.length})`);
 }
 
-const createPropertyObject = (propertyData, type, vars) => {
+const createPropertyObject = (propertyData, type, vars, fromInstance) => {
     let propLabel, propValue = '';
     const objectURI = type;
     const foundVarKey = Object.keys(vars).find(key => objectURI === vars[key].uri_element);
@@ -221,8 +241,14 @@ const createPropertyObject = (propertyData, type, vars) => {
     const result = (foundVarKey || hasOutsideObject) ? {
         property: propertyData.p,
         label: propLabel,
-        object: propValue
-    } : { property: propertyData.p, label: propLabel, type: type || 'http://www.w3.org/2001/XMLSchema#string' };
+        object: propValue,
+        fromInstance: fromInstance
+    } : {
+        property: propertyData.p,
+        label: propLabel,
+        type: type || 'http://www.w3.org/2001/XMLSchema#string',
+        fromInstance: fromInstance
+    };
     return result;
 }
 
