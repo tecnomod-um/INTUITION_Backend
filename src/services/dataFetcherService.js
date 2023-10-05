@@ -199,7 +199,7 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
                     return;
                 }
                 const target = prop.basicType?.value || prop.o.value;
-                const propObject = createPropertyObject(emptyProps[prop.p.value], target, vars);
+                const propObject = createPropertyObject(emptyProps[prop.p.value], target, vars, emptyProps[prop.p.value].fromInstance);
                 if (propObject.object) pushToPropArray(propObject, objectProperties);
                 else pushToPropArray(propObject, dataProperties);
             });
@@ -211,11 +211,9 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
         const noValuePropertyPromises = noValueProps.map(async (noValueProp) => {
             const noValuePropertyResponse = await sparqlPetition.executeQuery(endpoint, queries.getPropertyType([noValueProp]));
             noValuePropertyResponse.results.bindings.map(prop => {
-                const propObject = createPropertyObject(
-                    emptyProps[prop.p.value],
+                const propObject = createPropertyObject(emptyProps[prop.p.value],
                     prop.propertyType.value === 'http://www.w3.org/2002/07/owl#ObjectProperty' ? 'http://www.w3.org/2001/XMLSchema#anyURI' : 'http://www.w3.org/2001/XMLSchema#string',
-                    vars
-                );
+                    vars, emptyProps[prop.p.value].fromInstance);
                 if (propObject.object) pushToPropArray(propObject, objectProperties);
                 else pushToPropArray(propObject, dataProperties);
             });
@@ -283,7 +281,7 @@ const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectPr
             label: labelResponse.results.bindings[0]?.label?.value || '',
             type: [prop.type?.value || '']
         };
-        const propObject = createPropertyObject(propertyData, prop.type?.value, vars);
+        const propObject = createPropertyObject(propertyData, prop.type?.value, vars, prop.fromInstance);
         if (!propObject.object) pushToPropArray(propObject, dataProperties);
         else pushToPropArray(propObject, objectProperties);
     });
@@ -306,7 +304,8 @@ const findProperty = async (vars, endpoint, response, type, varValue) => {
 const createTripletProperty = (label, key) => ({
     property: `http://www.w3.org/1999/02/22-rdf-syntax-ns#${label}`,
     label: label,
-    object: key
+    object: key,
+    fromInstance: false
 })
 
 const getNodesFromSPARQL = async (vars, endpoint, limit, totalLimit) => {
