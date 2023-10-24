@@ -100,7 +100,7 @@ const getInstancePropertiesForGraph = (graph) => {
         GRAPH <${graph}> {
             ?graphInstance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?class .
             ?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
-            ?inst ?p ?o
+            ?graphInstance ?p ?o
         }
     }
     `);
