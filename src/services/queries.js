@@ -263,20 +263,12 @@ const getNodesByGraph = (graph, varKey, limit) => {
     SELECT DISTINCT ?node ?varType WHERE {
         GRAPH <${graph}> {
                 ?node ?property ?o .
-                
                 BIND("${varKey}" AS ?varType)
-
                 FILTER NOT EXISTS {
-                    ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent .
-                    FILTER(?o != ?parent)
-                }
-                FILTER NOT EXISTS {
-                    ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent .
-                    FILTER(?o != ?parent)
-                }
-                FILTER NOT EXISTS {
-                    ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent .
-                    FILTER(?o != ?parent)
+                    ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent1 .
+                    ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent2 .
+                    ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent3 .
+                    FILTER(?o != ?parent1 && ?o != ?parent2 && ?o != ?parent3)
                 }
         }
     }${queryLimit}
@@ -292,7 +284,7 @@ const getFilteredByType = (type, varKey, limit, filter) => {
             <http://www.w3.org/2002/07/owl#someValuesFrom> 
             <http://www.w3.org/2000/01/rdf-schema#subClassOf>
         }
-        FILTER(CONTAINS(str(?node), "${filter}") || CONTAINS(str(?varType), "${filter}")) .
+        FILTER( REGEX(?node, "${filter}") || REGEX(?varType, "${filter}")) .
     }${queryLimit}
     `);
 }
@@ -304,18 +296,12 @@ const getFilteredByGraph = (graph, varKey, limit, filter) => {
         GRAPH <${graph}> {
             ?node ?property ?o .
             FILTER NOT EXISTS {
-                ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent .
-                FILTER(?o != ?parent)
+                ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent1 .
+                ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent2 .
+                ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent3 .
+                FILTER(?o != ?parent1 && ?o != ?parent2 && ?o != ?parent3)
             }
-            FILTER NOT EXISTS {
-                ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent .
-                FILTER(?o != ?parent)
-            }
-            FILTER NOT EXISTS {
-                ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent .
-                FILTER(?o != ?parent)
-            }
-            FILTER(CONTAINS(str(?node), "${filter}") || CONTAINS(str(?varType), "${filter}")) .
+            FILTER(REGEX(?node, "${filter}") || REGEX(?varType, "${filter}")) .
         }
     }${queryLimit}
     `);

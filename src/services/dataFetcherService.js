@@ -129,7 +129,6 @@ const separateVars = (vars) => {
 }
 
 const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
-
     const propertyGeneralQueryObject = varValue.useGraphOnly
         ? queries.getPropertiesForGraph(varValue.uri_graph)
         : queries.getPropertiesForType(varValue.uri_element);
@@ -290,7 +289,6 @@ const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectPr
     return;
 }
 
-
 const findProperty = async (vars, endpoint, response, type, varValue) => {
     let property = response.results.bindings[0]?.[type]?.value;
     const target = property ? 'uri_element' : 'uri_graph';
@@ -327,12 +325,11 @@ const getNodesFromSPARQL = async (vars, endpoint, limit, totalLimit) => {
         }))
     );
     const nodeList = await Promise.all(labelResponsePromises);
-
+    console.log('Fetched initial nodes');
     return buildNodes(vars, nodeList, totalLimit);
 }
 
 const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
-    console.log('in filter')
     const sanitizedFilter = stringUtils.sanitizeInput(filter.toLowerCase());
     const filterQueryList = Object.keys(vars).map(key =>
         vars[key].useGraphOnly
@@ -355,6 +352,7 @@ const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
     );
     const nodeList = await Promise.all(labelResponsePromises);
 
+    console.log('fetched filtered nodes');
     return buildNodes(vars, nodeList, totalLimit);
 }
 
