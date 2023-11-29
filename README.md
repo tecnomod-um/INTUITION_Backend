@@ -1,4 +1,4 @@
-# INTUITION: Interactive Navigation Tool for Understanding and Inquiring Ontological Networks.
+# INTUITION: Interactive Navigation Tool for Using and Inquiring Ontology-Notated RDFs
 
 ## Overview
 The INTUITION Backend, an integral part of the UMqueries web tool, handles data processing, API endpoints, and server-side logic for exploring and mapping RDFs (Resource Description Framework) that incorporate a proper ontological structure, and formulating queries. This backend is developed with a focus on ease of integration and scalability, currently being limited to SPARQL knowledge graphs.
