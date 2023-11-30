@@ -20,7 +20,7 @@ app.use(
     saveUninitialized: true,
     cookie: {
       secure: false,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      maxAge: 24 * 60 * 60 * 1000,
     },
   })
 );
@@ -32,6 +32,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use('/', indexRouter);
-app.use('/umq', dataRouter);
+app.use('/intu', dataRouter);
 
 module.exports = app;
