@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const dataFetcher = require('../services/dataFetcherService.js');
 const maxValues = require('../config/maxValues');
+const logger = require('../utils/logger.js');
 const promiseCache = {};
 
 const getVars = async (req, endpoint) => {
     let vars;
     if (!req.session.vars) {
-        // If there is a promise in cache for this endpoint, wait for it
         if (promiseCache[endpoint]) {
             vars = await promiseCache[endpoint];
         } else {
@@ -16,7 +16,6 @@ const getVars = async (req, endpoint) => {
         }
         req.session.vars = vars;
         req.session.save();
-        // Once the data is fetched, delete the promise from the cache
         delete promiseCache[endpoint];
     } else {
         vars = req.session.vars;
@@ -37,7 +36,7 @@ router.get('/:file', async (req, res, next) => {
 
             case 'properties':
                 vars = await getVars(req, endpoint);
-                console.log(vars);
+                logger.info(`Vars set in properties: ${JSON.stringify(vars, null, 2)}`);
                 if (!req.session.propertiesPromise && !req.session.properties) {
                     req.session.propertiesPromise = dataFetcher.getPropertiesFromSPARQL(vars, endpoint);
                     req.session.save();
@@ -70,12 +69,14 @@ router.get('/:file', async (req, res, next) => {
                 } else
                     fileContent = await dataFetcher.getFilteredNodes(vars, endpoint, maxValues.node, filter, maxValues.total);
                 break;
+
             default:
                 throw new Error(`Invalid file parameter: ${file}`);
         }
         res.setHeader('Content-Type', 'application/json');
         res.json(fileContent);
     } catch (err) {
+        logger.error(`Error in /:file route: ${err.message}`);
         next(err);
     }
 });

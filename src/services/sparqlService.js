@@ -1,5 +1,6 @@
 const axios = require('axios');
 const axiosRetry = require('axios-retry');
+const logger = require('../utils/logger.js');
 
 const executeQuery = async (endpoint, query) => {
     let startTime = Date.now();
@@ -21,12 +22,11 @@ const executeQuery = async (endpoint, query) => {
     } catch (error) {
         const endTime = Date.now();
         const timeTaken = endTime - startTime;
-        console.log(`Time taken: ${timeTaken} milliseconds`);
-        console.log(query)
-        console.error("Error while executing query:", error.message);
-        if (error.response && error.response.data) {
-            console.error("Response body:", error.response.data);
-        }
+        logger.error(`Error while executing query: ${error.message}`, {
+            timeTaken: `${timeTaken} milliseconds`,
+            query: query,
+            errorDetails: error.response ? error.response.data : 'No response data'
+        });
     }
 }
 

@@ -1,6 +1,7 @@
 const queries = require('./queries.js');
 const sparqlPetition = require('./sparqlService.js');
 const stringUtils = require('../utils/stringUtils.js');
+const logger = require('../utils/logger.js');
 
 const getVarsFromSPARQL = async (endpoint) => {
     try {
@@ -8,7 +9,7 @@ const getVarsFromSPARQL = async (endpoint) => {
         const vars = await fetchLabelsForGraphs(endpoint, graphURIs);
         return vars;
     } catch (error) {
-        console.error('Error retrieving vars from SPARQL:', error);
+        logger.error(`Error retrieving vars from SPARQL: ${error.message}`);
         throw error;
     }
 }
@@ -219,7 +220,7 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
         });
         await Promise.all(noValuePropertyPromises);
     }
-    console.log(`Fetched ${varKey} simple objects (OP:${objectProperties.length}, DP:${dataProperties.length})`);
+    logger.info(`Fetched ${varKey} simple objects (OP: ${objectProperties.length}, DP: ${dataProperties.length})`);
 }
 
 const createPropertyObject = (propertyData, type, vars, fromInstance) => {
@@ -285,7 +286,7 @@ const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectPr
         else pushToPropArray(propObject, objectProperties);
     });
     await Promise.all(dataPropertyPromises);
-    console.log(`Fetched ${varKey} triplet objects (OP:${objectProperties.length}, DP:${dataProperties.length})`);
+    logger.info(`Fetched ${varKey} triplet objects (OP: ${objectProperties.length}, DP: ${dataProperties.length})`);
     return;
 }
 
@@ -325,7 +326,7 @@ const getNodesFromSPARQL = async (vars, endpoint, limit, totalLimit) => {
         }))
     );
     const nodeList = await Promise.all(labelResponsePromises);
-    console.log('Fetched initial nodes');
+    logger.info('Fetched initial nodes');
     return buildNodes(vars, nodeList, totalLimit);
 }
 
@@ -352,7 +353,7 @@ const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
     );
     const nodeList = await Promise.all(labelResponsePromises);
 
-    console.log('fetched filtered nodes');
+    logger.info('Fetched filtered nodes')
     return buildNodes(vars, nodeList, totalLimit);
 }
 

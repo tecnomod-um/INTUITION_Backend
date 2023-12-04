@@ -1,23 +1,29 @@
 const sparqlPetition = require('../services/sparqlService.js');
 const queries = require('../services/queries.js');
 const maxValues = require('../config/maxValues');
+const logger = require('../utils/logger.js');
 
 const executeSPARQL = async (req, res) => {
   try {
-    console.log("Starting SPARQL Query Execution");
+    logger.info("Starting SPARQL Query Execution");
     const responseData = await sparqlPetition.executeQuery(req.body.endpoint, req.body.query);
     const responseDataWithLabels = await fetchQueryLabels(req.body.endpoint, responseData);
 
-    console.log('Request processed successfully');
+    logger.info('Request processed successfully');
     res.json(responseDataWithLabels);
   } catch (error) {
-    console.error('Error during SPARQL Query Execution:', error);
+    logger.error(`Error during SPARQL Query Execution: ${JSON.stringify({
+      message: error.message,
+      stack: error.stack,
+      endpoint: req.body.endpoint,
+      query: req.body.query
+    }, null, 2)}`);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
 const fetchQueryLabels = async (endpoint, responseData) => {
-  console.log("Fetching required labels");
+  logger.info("Fetching required labels");
   const urisToFetch = [];
   responseData.results.bindings.forEach(binding => {
     Object.entries(binding).forEach(([key, value]) => {
@@ -61,7 +67,7 @@ const fetchLabelsBatch = async (endpoint, uris) => {
       }
     });
   } catch (error) {
-    console.error('Failed to fetch labels batch:', error);
+    logger.error(`Failed to fetch labels batch: ${error.message}`);
   }
   uris.forEach(uri => {
     if (!fetchedLabels.has(uri)) {
