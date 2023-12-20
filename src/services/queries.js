@@ -72,8 +72,7 @@ const getPropertiesForGraph = (graph) => {
     return (`
     SELECT DISTINCT ?p WHERE {
         GRAPH <${graph}> {
-                ?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
-                ?class ?p ?o .
+                ?s ?p ?o .
         }
     }
     `);
@@ -99,7 +98,6 @@ const getInstancePropertiesForGraph = (graph) => {
     SELECT DISTINCT ?p WHERE {
         GRAPH <${graph}> {
             ?graphInstance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?class .
-            ?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
             ?graphInstance ?p ?o
         }
     }
@@ -154,7 +152,7 @@ const getPropertySubClassForGraph = (graph, property, fromInstance) => {
 const getEmptyPropertiesForType = (type, emptyProperty, fromInstance) => {
     const subject = getQuerySubject(false, fromInstance, emptyProperty);
     return (`
-    SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), "") AS ?basicType) ?o WHERE {
+    SELECT DISTINCT ?p (IF(lang(?o) != "", "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString", IF(isLiteral(?o), datatype(?o), "")) AS ?basicType) ?o  WHERE {
         BIND(<${emptyProperty}> AS ?p)
         ?s ?Property <${type}> .
         ${subject}
@@ -170,15 +168,10 @@ const getEmptyPropertiesForType = (type, emptyProperty, fromInstance) => {
 const getEmptyPropertiesForGraph = (graph, emptyProperty, fromInstance) => {
     const subject = getQuerySubject(true, fromInstance, emptyProperty);
     return (`
-    SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), "") AS ?basicType) ?o WHERE {
+    SELECT DISTINCT ?p (IF(lang(?o) != "", "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString", IF(isLiteral(?o), datatype(?o), "")) AS ?basicType) ?o WHERE {
         GRAPH <${graph}> {
             BIND(<${emptyProperty}> AS ?p)
             ${subject}
-
-            VALUES ?Property {
-                <http://www.w3.org/2002/07/owl#someValuesFrom> 
-                <http://www.w3.org/2000/01/rdf-schema#subClassOf>
-            }
         }
     } LIMIT 1
     `);
@@ -234,7 +227,6 @@ const getDataPropertiesForTriplet = (graph) => {
     SELECT DISTINCT ?p ?type WHERE {
         GRAPH <${graph}> {
             ?s ?p ?o .
-
             BIND(datatype(?o) AS ?type)
         }
     }
@@ -278,7 +270,7 @@ const getNodesByGraph = (graph, varKey, limit) => {
 const getFilteredByType = (type, varKey, limit, filter) => {
     const queryLimit = limit ? ` LIMIT ${limit}` : "";
     return (`
-    SELECT DISTINCT ?node "${varKey}" AS ?varType WHERE {
+    SELECT DISTINCT ?node ( "${varKey}" AS ?varType ) WHERE {
         ?node ?property <${type}> .
         VALUES ?property {
             <http://www.w3.org/2002/07/owl#someValuesFrom> 
@@ -292,16 +284,20 @@ const getFilteredByType = (type, varKey, limit, filter) => {
 const getFilteredByGraph = (graph, varKey, limit, filter) => {
     const queryLimit = limit ? ` LIMIT ${limit}` : "";
     return (`
-    SELECT DISTINCT ?node "${varKey}" AS ?varType WHERE {
+    SELECT DISTINCT ?node ( "${varKey}" AS ?varType ) WHERE {
         GRAPH <${graph}> {
             ?node ?property ?o .
-            FILTER NOT EXISTS {
+            OPTIONAL {
                 ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent1 .
                 ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent2 .
                 ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent3 .
-                FILTER(?o != ?parent1 && ?o != ?parent2 && ?o != ?parent3)
             }
-            FILTER(REGEX(?node, "${filter}") || REGEX(?varType, "${filter}")) .
+            FILTER(
+                (!BOUND(?parent1) || ?o = ?parent1) &&
+                (!BOUND(?parent2) || ?o = ?parent2) &&
+                (!BOUND(?parent3) || ?o = ?parent3) &&
+                (REGEX(?node, "${filter}") || REGEX(?varType, "${filter}"))
+            )
         }
     }${queryLimit}
     `);

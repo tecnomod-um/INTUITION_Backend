@@ -190,7 +190,6 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
             const queryObjectEmpty = varValue.useGraphOnly
                 ? queries.getEmptyPropertiesForGraph(varValue.uri_graph, uri)
                 : queries.getEmptyPropertiesForType(varValue.uri_element, uri);
-
             const emptyPropertyResponse = await sparqlPetition.executeQuery(endpoint, queryObjectEmpty);
 
             emptyPropertyResponse.results.bindings.map(prop => {
@@ -331,16 +330,36 @@ const getNodesFromSPARQL = async (vars, endpoint, limit, totalLimit) => {
 }
 
 const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
-    const sanitizedFilter = stringUtils.sanitizeInput(filter.toLowerCase());
-    const filterQueryList = Object.keys(vars).map(key =>
-        vars[key].useGraphOnly
+    const sanitizedFilter = stringUtils.sanitizeInput(filter);
+    const filterQueryList = Object.keys(vars).map(key => ({
+        query: vars[key].useGraphOnly
             ? queries.getFilteredByGraph(vars[key].uri_graph, key, limit, sanitizedFilter)
-            : queries.getFilteredByType(vars[key].uri_element, key, limit, sanitizedFilter)
-    );
+            : queries.getFilteredByType(vars[key].uri_element, key, limit, sanitizedFilter),
+        varKey: key
+    }));
 
     const allNodesResponses = await Promise.all(
-        filterQueryList.map(query => sparqlPetition.executeQuery(endpoint, query))
+        filterQueryList.map(async ({ query, varKey }) => {
+            // Mock tfac2gene
+            if (varKey === 'tfac2gene') {
+                logger.info(`Mock response for ${varKey}`);
+                return {
+                    head: { link: [], vars: ['node', 'varType'] },
+                    results: { distinct: false, ordered: true, bindings: [] }
+                };
+            }
+            const startTime = new Date().getTime();
+            const result = await sparqlPetition.executeQuery(endpoint, query);
+            const endTime = new Date().getTime();
+            logger.info(`Query for ${varKey} completed in ${(endTime - startTime) / 1000} seconds`);
+            if (varKey === 'gene') {
+                console.log('GEN')
+                console.log(result.results.bindings);
+            }
+            return result;
+        })
     );
+
     const labelResponsePromises = allNodesResponses.flatMap(response =>
         response.results.bindings.map(entry =>
             sparqlPetition.executeQuery(endpoint, queries.getLabel(entry.node.value))
@@ -353,9 +372,9 @@ const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
     );
     const nodeList = await Promise.all(labelResponsePromises);
 
-    logger.info('Fetched filtered nodes')
+    logger.info('Fetched filtered nodes');
     return buildNodes(vars, nodeList, totalLimit);
-}
+};
 
 const buildNodes = (vars, nodeList, totalLimit) => {
     const limitPerVarType = Math.floor(totalLimit / Object.keys(vars).length);
