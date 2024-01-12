@@ -40,7 +40,6 @@ const getVarsFromGraph = (graph) => {
                 <http://www.w3.org/2002/07/owl#someValuesFrom> 
                 <http://www.w3.org/2000/01/rdf-schema#subClassOf>
             }
-        
             FILTER NOT EXISTS {
                 ?VarType <http://www.w3.org/2002/07/owl#someValuesFrom> ?VarParentValues .
                 FILTER(?VarParentValues != ?VarType)
@@ -152,11 +151,11 @@ const getPropertySubClassForGraph = (graph, property, fromInstance) => {
 const getEmptyPropertiesForType = (type, emptyProperty, fromInstance) => {
     const subject = getQuerySubject(false, fromInstance, emptyProperty);
     return (`
-    SELECT DISTINCT ?p (IF(lang(?o) != "", "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString", IF(isLiteral(?o), datatype(?o), "")) AS ?basicType) ?o  WHERE {
+    SELECT DISTINCT ?p (IF(BOUND(?lang), "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString", IF(isLiteral(?o), datatype(?o), "")) AS ?basicType) ?o  WHERE {
         BIND(<${emptyProperty}> AS ?p)
         ?s ?Property <${type}> .
         ${subject}
-
+        BIND (lang(?o) AS ?lang) .
         VALUES ?Property {
             <http://www.w3.org/2002/07/owl#someValuesFrom> 
             <http://www.w3.org/2000/01/rdf-schema#subClassOf>
@@ -168,7 +167,8 @@ const getEmptyPropertiesForType = (type, emptyProperty, fromInstance) => {
 const getEmptyPropertiesForGraph = (graph, emptyProperty, fromInstance) => {
     const subject = getQuerySubject(true, fromInstance, emptyProperty);
     return (`
-    SELECT DISTINCT ?p (IF(lang(?o) != "", "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString", IF(isLiteral(?o), datatype(?o), "")) AS ?basicType) ?o WHERE {
+    SELECT DISTINCT ?p (IF(BOUND(?lang), "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString", IF(isLiteral(?o), datatype(?o), "")) AS ?basicType) ?o WHERE {
+        BIND (lang(?o) AS ?lang) .
         GRAPH <${graph}> {
             BIND(<${emptyProperty}> AS ?p)
             ${subject}

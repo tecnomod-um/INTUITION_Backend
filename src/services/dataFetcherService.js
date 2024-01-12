@@ -352,10 +352,6 @@ const getFilteredNodes = async (vars, endpoint, limit, filter, totalLimit) => {
             const result = await sparqlPetition.executeQuery(endpoint, query);
             const endTime = new Date().getTime();
             logger.info(`Query for ${varKey} completed in ${(endTime - startTime) / 1000} seconds`);
-            if (varKey === 'gene') {
-                console.log('GEN')
-                console.log(result.results.bindings);
-            }
             return result;
         })
     );
