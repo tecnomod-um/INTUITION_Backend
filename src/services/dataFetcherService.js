@@ -162,6 +162,8 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
         const labelResponsePromise = sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
         const [subClassResponse, labelResponse] = await Promise.all([subClassResponsePromise, labelResponsePromise]);
 
+
+
         const propertyData = {
             p: prop.p.value,
             label: labelResponse.results.bindings[0]?.label?.value || '',
@@ -185,23 +187,28 @@ const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectPro
 
     // Treat empty properties
     if (Object.keys(emptyProps).length > 0) {
+
         const allVarURIs = Object.values(vars).map(v => v.uri_element);
         const emptyPropertyPromises = Object.keys(emptyProps).map(async (uri) => {
+
             const queryObjectEmpty = varValue.useGraphOnly
                 ? queries.getEmptyPropertiesForGraph(varValue.uri_graph, uri)
                 : queries.getEmptyPropertiesForType(varValue.uri_element, uri);
             const emptyPropertyResponse = await sparqlPetition.executeQuery(endpoint, queryObjectEmpty);
 
-            emptyPropertyResponse.results.bindings.map(prop => {
-                if (!prop.basicType?.value && !(prop.o?.value && allVarURIs.includes(prop.o.value))) {
-                    noValueProps.push(prop.p.value);
-                    return;
-                }
-                const target = prop.basicType?.value || prop.o.value;
-                const propObject = createPropertyObject(emptyProps[prop.p.value], target, vars, emptyProps[prop.p.value].fromInstance);
-                if (propObject.object) pushToPropArray(propObject, objectProperties);
-                else pushToPropArray(propObject, dataProperties);
-            });
+            if (emptyPropertyResponse.results.bindings.length > 0) {
+                emptyPropertyResponse.results.bindings.map(prop => {
+                    if (!prop.basicType?.value && !(prop.o?.value && allVarURIs.includes(prop.o.value))) {
+                        noValueProps.push(prop.p.value);
+                        return;
+                    }
+                    const target = prop.basicType?.value || prop.o.value;
+                    const propObject = createPropertyObject(emptyProps[prop.p.value], target, vars, emptyProps[prop.p.value].fromInstance);
+                    if (propObject.object) pushToPropArray(propObject, objectProperties);
+                    else pushToPropArray(propObject, dataProperties);
+                });
+            } else
+                noValueProps.push(uri);
         });
         await Promise.all(emptyPropertyPromises);
     }
