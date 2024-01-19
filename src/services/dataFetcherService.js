@@ -167,7 +167,6 @@ const processProperties = async (bindings, varValue, vars, endpoint, objectPrope
 
     const propertyPromises = bindings.map(async (prop) => {
         if (prop.p.value === objectUri || prop.p.value === subjectUri) {
-            console.log(prop.p.value);
             // Special handling for triplet properties that are either object or subject
             const type = prop.p.value === objectUri ? 'object' : 'subject';
             const responseForProperty = await sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, type)); // Make sure you have the right query here
