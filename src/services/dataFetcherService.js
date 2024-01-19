@@ -106,19 +106,13 @@ const getPropertiesFromSPARQL = async (vars, endpoint) => {
     const dataProperties = {};
     const { triplet, simple } = separateVars(vars);
 
-    const promiseSimple = Promise.all(Object.entries(simple).map(async ([varKey, varValue]) => {
+    const promises = Promise.all([...Object.entries(simple), ...Object.entries(triplet)].map(async ([varKey, varValue]) => {
         objectProperties[varKey] = [];
         dataProperties[varKey] = [];
-        return fetchSimpleProperties(varKey, varValue, vars, endpoint, objectProperties[varKey], dataProperties[varKey]);
+        return fetchProperties(varKey, varValue, vars, endpoint, objectProperties[varKey], dataProperties[varKey]);
     }));
 
-    const promiseTriplet = Promise.all(Object.entries(triplet).map(async ([varKey, varValue]) => {
-        objectProperties[varKey] = [];
-        dataProperties[varKey] = [];
-        return fetchTripletProperties(varKey, varValue, vars, endpoint, objectProperties[varKey], dataProperties[varKey]);
-    }));
-
-    await Promise.all([promiseSimple, promiseTriplet]);
+    await promises;
     return { objectProperties, dataProperties };
 }
 
@@ -129,105 +123,160 @@ const separateVars = (vars) => {
     }, { triplet: {}, simple: {} });
 }
 
-const fetchSimpleProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
-    const propertyGeneralQueryObject = varValue.useGraphOnly
-        ? queries.getPropertiesForGraph(varValue.uri_graph)
-        : queries.getPropertiesForType(varValue.uri_element);
-    const propertyInstanceQueryObject = varValue.useGraphOnly
-        ? queries.getInstancePropertiesForGraph(varValue.uri_graph)
-        : queries.getInstancePropertiesForType(varValue.uri_element);
+const fetchProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
+    const propertyQueries = varValue.useGraphOnly ?
+        {
+            general: queries.getPropertiesForGraph(varValue.uri_graph),
+            instance: queries.getInstancePropertiesForGraph(varValue.uri_graph),
+            subclass: (uri, fromInstance) => queries.getPropertySubClassForGraph(varValue.uri_graph, uri, fromInstance),
+            empty: uri => queries.getEmptyPropertiesForGraph(varValue.uri_graph, uri)
+        } : {
+            general: queries.getPropertiesForType(varValue.uri_element),
+            instance: queries.getInstancePropertiesForType(varValue.uri_element),
+            subclass: (uri, fromInstance) => queries.getPropertySubClassForType(varValue.uri_element, uri, fromInstance),
+            empty: uri => queries.getEmptyPropertiesForType(varValue.uri_element, uri)
+        };
+
+    if (varValue.uri_element === 'Triplet') {
+        propertyQueries.general = queries.getPropertiesFromStructuredTriplets(varValue.uri_graph);
+        propertyQueries.instance = queries.getPropertiesFromInstancedTriplets(varValue.uri_graph);
+    }
 
     const processResponse = (response, fromInstance) => response.results.bindings.map(prop => ({ ...prop, fromInstance: fromInstance }));
 
     const [propertyGeneralResponse, propertyInstanceResponse] = await Promise.all([
-        sparqlPetition.executeQuery(endpoint, propertyGeneralQueryObject),
-        sparqlPetition.executeQuery(endpoint, propertyInstanceQueryObject)
+        sparqlPetition.executeQuery(endpoint, propertyQueries.general),
+        sparqlPetition.executeQuery(endpoint, propertyQueries.instance)
     ]);
 
     const bindings = [
         ...processResponse(propertyGeneralResponse, false),
         ...processResponse(propertyInstanceResponse, true)
     ];
+    await processProperties(bindings, varValue, vars, endpoint, objectProperties, dataProperties, propertyQueries.subclass);
+    const typeOfProp = varValue.uri_element === 'Triplet' ? 'triplet' : 'basic';
+    logger.info(`Fetched ${varKey} ${typeOfProp} props (OP: ${objectProperties.length}, DP: ${dataProperties.length})`);
+}
 
-    const responses = { results: { bindings } };
-
+// Fetches each property targets and typing
+const processProperties = async (bindings, varValue, vars, endpoint, objectProperties, dataProperties, subclassQuery) => {
     const emptyProps = {};
     const noValueProps = [];
+    const objectUri = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#object';
+    const subjectUri = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#subject';
 
-    const propertyPromises = responses.results.bindings.map(async (prop) => {
-        const propertySubClassObject = varValue.useGraphOnly
-            ? queries.getPropertySubClassForGraph(varValue.uri_graph, prop.p.value, prop.fromInstance)
-            : queries.getPropertySubClassForType(varValue.uri_element, prop.p.value, prop.fromInstance);
-        const subClassResponsePromise = sparqlPetition.executeQuery(endpoint, propertySubClassObject);
-        const labelResponsePromise = sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
-        const [subClassResponse, labelResponse] = await Promise.all([subClassResponsePromise, labelResponsePromise]);
+    const propertyPromises = bindings.map(async (prop) => {
+        if (prop.p.value === objectUri || prop.p.value === subjectUri) {
+            console.log(prop.p.value);
+            // Special handling for triplet properties that are either object or subject
+            const type = prop.p.value === objectUri ? 'object' : 'subject';
+            const responseForProperty = await sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, type)); // Make sure you have the right query here
+            const foundProperty = await findProperty(vars, endpoint, responseForProperty, type, varValue);
+            if (foundProperty) {
+                const tripletPropertyObject = createTripletProperty(type, foundProperty);
+                pushToPropArray(tripletPropertyObject, objectProperties);
+            }
+        } else {
+            const [subClassResponse, labelResponse] = await Promise.all([
+                sparqlPetition.executeQuery(endpoint, subclassQuery(prop.p.value, prop.fromInstance)),
+                sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value))
+            ]);
 
-
-
-        const propertyData = {
-            p: prop.p.value,
-            label: labelResponse.results.bindings[0]?.label?.value || '',
-            type: subClassResponse.results.bindings.map(entry => entry.type?.value || ''),
-            fromInstance: prop.fromInstance
-        };
-
-        if (!propertyData.type[0]) {
-            emptyProps[propertyData.p] = propertyData;
-            return;
+            // Helper property object
+            const propertyData = {
+                p: prop.p.value,
+                label: labelResponse.results.bindings[0]?.label?.value || '',
+                type: subClassResponse.results.bindings.map(entry => entry.type?.value || ''),
+                fromInstance: prop.fromInstance
+            };
+            if (!propertyData.type[0]) {
+                emptyProps[propertyData.p] = propertyData;
+                return;
+            }
+            propertyData.type.forEach(type => {
+                const propObject = createPropertyObject(propertyData, type, vars, propertyData.fromInstance);
+                if (propObject.object) pushToPropArray(propObject, objectProperties);
+                else pushToPropArray(propObject, dataProperties);
+            });
         }
-
-        return propertyData.type.map(type => {
-            const propObject = createPropertyObject(propertyData, type, vars, prop.fromInstance);
-            if (propObject.object) pushToPropArray(propObject, objectProperties);
-            else pushToPropArray(propObject, dataProperties);
-        });
     });
 
     await Promise.all(propertyPromises);
 
-    // Treat empty properties
-    if (Object.keys(emptyProps).length > 0) {
-
-        const allVarURIs = Object.values(vars).map(v => v.uri_element);
-        const emptyPropertyPromises = Object.keys(emptyProps).map(async (uri) => {
-
-            const queryObjectEmpty = varValue.useGraphOnly
-                ? queries.getEmptyPropertiesForGraph(varValue.uri_graph, uri)
-                : queries.getEmptyPropertiesForType(varValue.uri_element, uri);
-            const emptyPropertyResponse = await sparqlPetition.executeQuery(endpoint, queryObjectEmpty);
-
-            if (emptyPropertyResponse.results.bindings.length > 0) {
-                emptyPropertyResponse.results.bindings.map(prop => {
-                    if (!prop.basicType?.value && !(prop.o?.value && allVarURIs.includes(prop.o.value))) {
-                        noValueProps.push(prop.p.value);
-                        return;
-                    }
-                    const target = prop.basicType?.value || prop.o.value;
-                    const propObject = createPropertyObject(emptyProps[prop.p.value], target, vars, emptyProps[prop.p.value].fromInstance);
-                    if (propObject.object) pushToPropArray(propObject, objectProperties);
-                    else pushToPropArray(propObject, dataProperties);
-                });
-            } else
-                noValueProps.push(uri);
-        });
-        await Promise.all(emptyPropertyPromises);
-    }
-
-    if (noValueProps.length > 0) {
-        const noValuePropertyPromises = noValueProps.map(async (noValueProp) => {
-            const noValuePropertyResponse = await sparqlPetition.executeQuery(endpoint, queries.getPropertyType([noValueProp]));
-            noValuePropertyResponse.results.bindings.map(prop => {
-                const propObject = createPropertyObject(emptyProps[prop.p.value],
-                    prop.propertyType.value === 'http://www.w3.org/2002/07/owl#ObjectProperty' ? 'http://www.w3.org/2001/XMLSchema#anyURI' : 'http://www.w3.org/2001/XMLSchema#string',
-                    vars, emptyProps[prop.p.value].fromInstance);
-                if (propObject.object) pushToPropArray(propObject, objectProperties);
-                else pushToPropArray(propObject, dataProperties);
-            });
-        });
-        await Promise.all(noValuePropertyPromises);
-    }
-    logger.info(`Fetched ${varKey} simple objects (OP: ${objectProperties.length}, DP: ${dataProperties.length})`);
+    // If no class was recognized, additional info from the object is tried to fetch
+    await processEmptyProperties(noValueProps, emptyProps, varValue, vars, endpoint, objectProperties, dataProperties);
+    await processNoValueProperties(noValueProps, emptyProps, vars, endpoint, objectProperties, dataProperties);
 }
+
+// Process empty properties
+const processEmptyProperties = async (noValueProps, emptyProps, varValue, vars, endpoint, objectProperties, dataProperties) => {
+    if (Object.keys(emptyProps).length === 0) return;
+
+    const allVarURIs = Object.values(vars).map(v => v.uri_element);
+    const emptyPropertyPromises = Object.keys(emptyProps).map(async (uri) => {
+        const queryObjectEmpty = varValue.useGraphOnly
+            ? queries.getEmptyPropertiesForGraph(varValue.uri_graph, uri)
+            : queries.getEmptyPropertiesForType(varValue.uri_element, uri);
+        const emptyPropertyResponse = await sparqlPetition.executeQuery(endpoint, queryObjectEmpty);
+
+        emptyPropertyResponse.results.bindings.forEach(prop => {
+            if (!prop.basicType?.value && !(prop.o?.value && allVarURIs.includes(prop.o.value))) {
+                // If no basicType is found and the value isn't a recognized URI, mark as having no value
+                noValueProps.push(uri);
+                return;
+            }
+            const target = prop.basicType?.value || prop.o.value;
+            const propObject = createPropertyObject(emptyProps[uri], target, vars, emptyProps[uri].fromInstance);
+            if (propObject.object)
+                pushToPropArray(propObject, objectProperties);
+            else
+                pushToPropArray(propObject, dataProperties);
+
+        });
+    });
+    await Promise.all(emptyPropertyPromises);
+}
+
+// Process properties targeting objects with no structure or similar
+const processNoValueProperties = async (noValueProps, emptyProps, vars, endpoint, objectProperties, dataProperties) => {
+    if (noValueProps.length === 0) return;
+
+    const noValuePropertyPromises = noValueProps.map(async (noValueProp) => {
+        const noValuePropertyResponse = await sparqlPetition.executeQuery(endpoint, queries.getPropertyType([noValueProp]));
+        noValuePropertyResponse.results.bindings.forEach(prop => {
+            const propType = prop.propertyType.value;
+            const propObject = createPropertyObject(
+                emptyProps[prop.p.value],
+                propType === 'http://www.w3.org/2002/07/owl#ObjectProperty' ? 'http://www.w3.org/2001/XMLSchema#anyURI' : 'http://www.w3.org/2001/XMLSchema#string',
+                vars,
+                emptyProps[prop.p.value].fromInstance
+            );
+            if (propObject.object)
+                pushToPropArray(propObject, objectProperties);
+            else
+                pushToPropArray(propObject, dataProperties);
+        });
+    });
+
+    await Promise.all(noValuePropertyPromises);
+}
+
+const findProperty = async (vars, endpoint, response, type, varValue) => {
+    let property = response.results.bindings[0]?.[type]?.value;
+    const target = property ? 'uri_element' : 'uri_graph';
+    if (!property) {
+        const missingResponse = await sparqlPetition.executeQuery(endpoint, queries.getMissingElementForTriplet(varValue.uri_graph, type));
+        property = missingResponse.results.bindings[0].graph.value;
+    }
+    return Object.keys(vars).find(key => property === vars[key][target]);
+}
+
+const createTripletProperty = (label, key) => ({
+    property: `http://www.w3.org/1999/02/22-rdf-syntax-ns#${label}`,
+    label: label,
+    object: key,
+    fromInstance: false
+})
 
 const createPropertyObject = (propertyData, type, vars, fromInstance) => {
     let propLabel, propValue = '';
@@ -260,58 +309,6 @@ const pushToPropArray = (propObject, propArray) => {
         propArray.push(propObject);
     }
 }
-
-const fetchTripletProperties = async (varKey, varValue, vars, endpoint, objectProperties, dataProperties) => {
-    const [objectResponse, subjectResponse, dataPropertyResponse] = await Promise.all([
-        sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, 'object')),
-        sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, 'subject')),
-        sparqlPetition.executeQuery(endpoint, queries.getPropertiesForGraph(varValue.uri_graph))
-    ]);
-    // Handle object properties
-    const [foundObject, foundSubject] = await Promise.all([
-        findProperty(vars, endpoint, objectResponse, 'object', varValue),
-        findProperty(vars, endpoint, subjectResponse, 'subject', varValue)
-    ]);
-    if (foundObject) objectProperties.push(createTripletProperty('object', foundObject));
-    if (foundSubject) objectProperties.push(createTripletProperty('subject', foundSubject));
-    // Handle data properties
-    const dataPropertyPromises = dataPropertyResponse.results.bindings.map(async (prop) => {
-        if (prop.p.value === '<http://www.w3.org/1999/02/22-rdf-syntax-ns#subject>'
-            || prop.p.value === '<http://www.w3.org/1999/02/22-rdf-syntax-ns#object>') return;
-
-        const labelResponse = await sparqlPetition.executeQuery(endpoint, queries.getLabel(prop.p.value));
-
-        // Helper property object
-        const propertyData = {
-            p: prop.p.value,
-            label: labelResponse.results.bindings[0]?.label?.value || '',
-            type: [prop.type?.value || '']
-        };
-        const propObject = createPropertyObject(propertyData, prop.type?.value, vars, prop.fromInstance);
-        if (!propObject.object) pushToPropArray(propObject, dataProperties);
-        else pushToPropArray(propObject, objectProperties);
-    });
-    await Promise.all(dataPropertyPromises);
-    logger.info(`Fetched ${varKey} triplet objects (OP: ${objectProperties.length}, DP: ${dataProperties.length})`);
-    return;
-}
-
-const findProperty = async (vars, endpoint, response, type, varValue) => {
-    let property = response.results.bindings[0]?.[type]?.value;
-    const target = property ? 'uri_element' : 'uri_graph';
-    if (!property) {
-        const missingResponse = await sparqlPetition.executeQuery(endpoint, queries.getMissingElementForTriplet(varValue.uri_graph, type));
-        property = missingResponse.results.bindings[0].graph.value;
-    }
-    return Object.keys(vars).find(key => property === vars[key][target]);
-}
-
-const createTripletProperty = (label, key) => ({
-    property: `http://www.w3.org/1999/02/22-rdf-syntax-ns#${label}`,
-    label: label,
-    object: key,
-    fromInstance: false
-})
 
 const getNodesFromSPARQL = async (vars, endpoint, limit, totalLimit) => {
     const individualQueries = Object.keys(vars).map(key =>

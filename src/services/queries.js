@@ -105,17 +105,15 @@ const getInstancePropertiesForGraph = (graph) => {
 
 const getQuerySubject = (useGraphOnly, fromInstance, property) => {
     if (useGraphOnly) {
-        if (fromInstance) {
-            return `?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?class .\n?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .`;
-        } else {
+        if (fromInstance)
+            return `?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?class .\n?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .\n?s <${property}> ?o .`;
+        else
             return `?s <${property}> ?o .`;
-        }
     } else {
-        if (fromInstance) {
+        if (fromInstance)
             return `?typeInstance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?s .\n?typeInstance <${property}> ?o .`;
-        } else {
+        else
             return `?s <${property}> ?o .`;
-        }
     }
 }
 
@@ -203,6 +201,29 @@ const getElementForTriplet = (graph, type) => {
     GROUP BY ?${type}
     ORDER BY DESC(?count)
     LIMIT 1
+    `);
+}
+
+const getPropertiesFromStructuredTriplets = (graph) => {
+    return (`
+    SELECT DISTINCT ?p WHERE {
+        GRAPH <${graph}> {
+                ?s <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+                ?s ?p ?o
+        }
+    }
+    `);
+}
+
+const getPropertiesFromInstancedTriplets = (graph) => {
+    return (`
+    SELECT DISTINCT ?p WHERE {
+        GRAPH <${graph}> {
+                ?s <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+                ?instance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?s.
+                ?instance ?p ?o
+        }
+    }
     `);
 }
 
@@ -315,6 +336,8 @@ module.exports = {
     getPropertySubClassForType,
     getPropertySubClassForGraph,
     getElementForTriplet,
+    getPropertiesFromStructuredTriplets,
+    getPropertiesFromInstancedTriplets,
     getMissingElementForTriplet,
     getDataPropertiesForTriplet,
     getNodesByType,
