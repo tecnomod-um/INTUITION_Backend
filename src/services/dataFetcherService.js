@@ -169,7 +169,7 @@ const processProperties = async (bindings, varValue, vars, endpoint, objectPrope
         if (prop.p.value === objectUri || prop.p.value === subjectUri) {
             // Special handling for triplet properties that are either object or subject
             const type = prop.p.value === objectUri ? 'object' : 'subject';
-            const responseForProperty = await sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, type)); // Make sure you have the right query here
+            const responseForProperty = await sparqlPetition.executeQuery(endpoint, queries.getElementForTriplet(varValue.uri_graph, type));
             const foundProperty = await findProperty(vars, endpoint, responseForProperty, type, varValue);
             if (foundProperty) {
                 const tripletPropertyObject = createTripletProperty(type, foundProperty);
@@ -263,10 +263,18 @@ const processNoValueProperties = async (noValueProps, emptyProps, vars, endpoint
 const findProperty = async (vars, endpoint, response, type, varValue) => {
     let property = response.results.bindings[0]?.[type]?.value;
     const target = property ? 'uri_element' : 'uri_graph';
-    if (!property) {
-        const missingResponse = await sparqlPetition.executeQuery(endpoint, queries.getMissingElementForTriplet(varValue.uri_graph, type));
-        property = missingResponse.results.bindings[0].graph.value;
-    }
+    // If the correct object class was found in vars, return true
+    const foundElement = Object.keys(vars).find(key => target === 'uri_element' && property === vars[key][target]);
+    if (foundElement) return foundElement;
+    let missingElementQuery;
+    // If another was discovered, check it's class structure
+    if (property)
+        missingElementQuery = queries.getParentElementForTriplet(response.results.bindings[0]?.[type].value);
+    // If no object was fetched, assume graph defined object is it's target and fetch it
+    else
+        missingElementQuery = queries.getMissingElementForTriplet(varValue.uri_graph, type);
+    const missingResponse = await sparqlPetition.executeQuery(endpoint, missingElementQuery);
+    property = property ? missingResponse.results.bindings[0].subClass.value : missingResponse.results.bindings[0].graph.value;
     return Object.keys(vars).find(key => property === vars[key][target]);
 }
 

@@ -192,15 +192,12 @@ const getPropertyType = (noValueProperties) => {
 
 const getElementForTriplet = (graph, type) => {
     return (`
-    SELECT (COUNT(?${type}) as ?count) ?${type} WHERE {
+    SELECT DISTINCT ?${type} WHERE {
     GRAPH <${graph}>  {
         ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#${type}> ?x
     }
     ?x <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?${type} .
     }
-    GROUP BY ?${type}
-    ORDER BY DESC(?count)
-    LIMIT 1
     `);
 }
 
@@ -227,8 +224,22 @@ const getPropertiesFromInstancedTriplets = (graph) => {
     `);
 }
 
+const getParentElementForTriplet = (element) => {
+    return (`
+    SELECT ?subClass (COUNT(?subClass) as ?subClassCount)
+    WHERE {
+        <${element}> <http://www.w3.org/2000/01/rdf-schema#subClassOf>* ?subClass .
+        OPTIONAL { ?subClass <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent. }
+        FILTER (!BOUND(?parent) || ?parent = <http://www.w3.org/2002/07/owl#Thing>)
+    }
+    GROUP BY ?subClass
+    ORDER BY DESC(?subClassCount)
+    LIMIT 1
+    `);
+}
+
 const getMissingElementForTriplet = (graph, property) => {
-    return `
+    return (`
     SELECT ?graph (COUNT(?x) as ?subjectCount) WHERE {
         GRAPH <${graph}> {
             ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#${property}> ?x .
@@ -240,7 +251,7 @@ const getMissingElementForTriplet = (graph, property) => {
     GROUP BY ?graph
     ORDER BY DESC(?subjectCount)
     LIMIT 1
-    `;
+    `);
 }
 
 const getDataPropertiesForTriplet = (graph) => {
@@ -338,6 +349,7 @@ module.exports = {
     getElementForTriplet,
     getPropertiesFromStructuredTriplets,
     getPropertiesFromInstancedTriplets,
+    getParentElementForTriplet,
     getMissingElementForTriplet,
     getDataPropertiesForTriplet,
     getNodesByType,
