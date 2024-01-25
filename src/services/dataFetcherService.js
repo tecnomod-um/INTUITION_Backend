@@ -213,6 +213,7 @@ const processEmptyProperties = async (noValueProps, emptyProps, varValue, vars, 
 
     const allVarURIs = Object.values(vars).map(v => v.uri_element);
     const emptyPropertyPromises = Object.keys(emptyProps).map(async (uri) => {
+
         const queryObjectEmpty = varValue.useGraphOnly
             ? queries.getEmptyPropertiesForGraph(varValue.uri_graph, uri)
             : queries.getEmptyPropertiesForType(varValue.uri_element, uri);
@@ -221,7 +222,7 @@ const processEmptyProperties = async (noValueProps, emptyProps, varValue, vars, 
         emptyPropertyResponse.results.bindings.forEach(prop => {
             if (!prop.basicType?.value && !(prop.o?.value && allVarURIs.includes(prop.o.value))) {
                 // If no basicType is found and the value isn't a recognized URI, mark as having no value
-                noValueProps.push(uri);
+                noValueProps.push(prop.p.value);
                 return;
             }
             const target = prop.basicType?.value || prop.o.value;
@@ -232,6 +233,9 @@ const processEmptyProperties = async (noValueProps, emptyProps, varValue, vars, 
                 pushToPropArray(propObject, dataProperties);
 
         });
+        // If nothing was found mark it as no value
+        if (!emptyPropertyResponse.results.bindings.some(prop => prop.p.value === uri))
+            noValueProps.push(uri);
     });
     await Promise.all(emptyPropertyPromises);
 }
@@ -239,8 +243,8 @@ const processEmptyProperties = async (noValueProps, emptyProps, varValue, vars, 
 // Process properties targeting objects with no structure or similar
 const processNoValueProperties = async (noValueProps, emptyProps, vars, endpoint, objectProperties, dataProperties) => {
     if (noValueProps.length === 0) return;
-
     const noValuePropertyPromises = noValueProps.map(async (noValueProp) => {
+
         const noValuePropertyResponse = await sparqlPetition.executeQuery(endpoint, queries.getPropertyType([noValueProp]));
         noValuePropertyResponse.results.bindings.forEach(prop => {
             const propType = prop.propertyType.value;
