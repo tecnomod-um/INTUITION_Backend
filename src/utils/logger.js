@@ -26,6 +26,15 @@ const logger = winston.createLogger({
     ]
 });
 
+logger.add(new winston.transports.File({
+    filename: 'logs/uncaughtExceptions.log',
+    handleExceptions: true,
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.prettyPrint()
+    )
+}));
+
 if (process.env.NODE_ENV !== 'production') {
     logger.add(new winston.transports.Console({
         format: winston.format.combine(
