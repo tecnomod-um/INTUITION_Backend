@@ -8,38 +8,20 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://purl.bioontology.org/ontology/OMIM/manifestation_of",
-        "label": "Manifestation of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://purl.bioontology.org/ontology/OMIM/has_allelic_variant",
-        "label": "Has allelic variant",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://purl.bioontology.org/ontology/OMIM/has_phenotype",
-        "label": "Has phenotype",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
         "property": "http://purl.bioontology.org/ontology/OMIM/allelic_variant_of",
         "label": "Allelic variant of",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       },
       {
-        "property": "http://purl.bioontology.org/ontology/OMIM/inheritance_type_of",
-        "label": "Inheritance type of",
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.bioontology.org/ontology/OMIM/manifestation_of",
+        "label": "Manifestation of",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       },
@@ -50,8 +32,20 @@
         "fromInstance": true
       },
       {
-        "property": "http://purl.bioontology.org/ontology/OMIM/has_inheritance_type",
-        "label": "Has inheritance type",
+        "property": "http://purl.bioontology.org/ontology/OMIM/inheritance_type_of",
+        "label": "Inheritance type of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.bioontology.org/ontology/OMIM/has_manifestation",
+        "label": "Has manifestation",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.bioontology.org/ontology/OMIM/has_phenotype",
+        "label": "Has phenotype",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       },
@@ -62,24 +56,16 @@
         "fromInstance": true
       },
       {
-        "property": "http://purl.bioontology.org/ontology/OMIM/has_manifestation",
-        "label": "Has manifestation",
+        "property": "http://purl.bioontology.org/ontology/OMIM/has_allelic_variant",
+        "label": "Has allelic variant",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
-      }
-    ],
-    "database": [
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "object": "database",
-        "fromInstance": false
       },
       {
-        "property": "https://w3id.org/biolink/vocab/category",
-        "label": "category",
+        "property": "http://purl.bioontology.org/ontology/OMIM/has_inheritance_type",
+        "label": "Has inheritance type",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
+        "fromInstance": true
       }
     ],
     "molecular_interaction": [
@@ -98,33 +84,17 @@
         "fromInstance": false
       }
     ],
-    "molecular_function": [
+    "database": [
       {
         "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
         "label": "is subclass of",
-        "object": "molecular_function",
-        "fromInstance": false
-      }
-    ],
-    "cellular_component": [
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "object": "cellular_component",
-        "fromInstance": false
-      }
-    ],
-    "biological_process": [
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "object": "biological_process",
+        "object": "database",
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2002/07/owl#someValuesFrom",
-        "label": "someValuesFrom",
-        "object": "biological_process",
+        "property": "https://w3id.org/biolink/vocab/category",
+        "label": "category",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       }
     ],
@@ -156,80 +126,24 @@
         "fromInstance": false
       }
     ],
-    "gene": [
-      {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
-        "label": "part of",
-        "object": "chromosome",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.org/dc/terms/hasVersion",
-        "label": "has version",
-        "object": "reference_genome",
-        "fromInstance": false
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_010078",
-        "label": "encodes",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_010078",
-        "label": "encodes",
-        "object": "transcription_factor",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "object": "gene",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "object": "gene",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002331",
-        "label": "involved in",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#closeMatch",
-        "label": "has close match",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/GENO_0000906",
-        "label": "on strand",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      }
-    ],
     "tad": [
-      {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
-        "label": "part of",
-        "object": "chromosome",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.org/dc/terms/hasVersion",
-        "label": "has version",
-        "object": "reference_genome",
-        "fromInstance": false
-      },
       {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
         "object": "tad",
         "fromInstance": true
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
+        "label": "part of",
+        "object": "chromosome",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.org/dc/terms/hasVersion",
+        "label": "has version",
+        "object": "reference_genome",
+        "fromInstance": false
       },
       {
         "property": "http://semanticscience.org/resource/SIO_000253",
@@ -244,20 +158,14 @@
         "fromInstance": false
       },
       {
-        "property": "http://schema.org/evidenceOrigin",
-        "label": "has evidence origin",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
         "property": "http://semanticscience.org/resource/SIO_000772",
         "label": "has evidence",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       },
       {
-        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        "label": "is defined by",
+        "property": "http://schema.org/evidenceOrigin",
+        "label": "has evidence origin",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       },
@@ -266,6 +174,42 @@
         "label": "observed in",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+        "label": "is defined by",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      }
+    ],
+    "molecular_function": [
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "object": "molecular_function",
+        "fromInstance": false
+      }
+    ],
+    "cellular_component": [
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "object": "cellular_component",
+        "fromInstance": false
+      }
+    ],
+    "biological_process": [
+      {
+        "property": "http://www.w3.org/2002/07/owl#someValuesFrom",
+        "label": "someValuesFrom",
+        "object": "biological_process",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "object": "biological_process",
+        "fromInstance": false
       }
     ],
     "protein": [
@@ -276,15 +220,75 @@
         "fromInstance": false
       },
       {
+        "property": "http://purl.obolibrary.org/obo/RO_0002429",
+        "label": "involved in positive regulation of",
+        "object": "transcription_factor",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002429",
+        "label": "involved in positive regulation of",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002429",
+        "label": "involved in positive regulation of",
+        "object": "gene",
+        "fromInstance": false
+      },
+      {
         "property": "http://purl.obolibrary.org/obo/RO_0002327",
         "label": "enables",
         "object": "molecular_function",
         "fromInstance": false
       },
       {
+        "property": "http://purl.obolibrary.org/obo/RO_0002578",
+        "label": "directly regulates",
+        "object": "transcription_factor",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002578",
+        "label": "directly regulates",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
         "property": "http://purl.obolibrary.org/obo/RO_0002331",
         "label": "involved in",
         "object": "biological_process",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002430",
+        "label": "involved in negative regulation of",
+        "object": "transcription_factor",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002430",
+        "label": "involved in negative regulation of",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002430",
+        "label": "involved in negative regulation of",
+        "object": "gene",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0012012",
+        "label": "indirectly regulates",
+        "object": "transcription_factor",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0012012",
+        "label": "indirectly regulates",
+        "object": "protein",
         "fromInstance": false
       },
       {
@@ -306,16 +310,16 @@
         "fromInstance": false
       },
       {
-        "property": "http://purl.obolibrary.org/obo/RO_0002578",
-        "label": "directly regulates",
-        "object": "transcription_factor",
-        "fromInstance": false
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "object": "protein",
+        "fromInstance": true
       },
       {
-        "property": "http://purl.obolibrary.org/obo/RO_0002578",
-        "label": "directly regulates",
-        "object": "protein",
-        "fromInstance": false
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "object": "transcription_factor",
+        "fromInstance": true
       },
       {
         "property": "http://semanticscience.org/resource/SIO_000558",
@@ -346,66 +350,6 @@
         "label": "involved in regulation of",
         "object": "transcription_factor",
         "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002429",
-        "label": "involved in positive regulation of",
-        "object": "transcription_factor",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002429",
-        "label": "involved in positive regulation of",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002429",
-        "label": "involved in positive regulation of",
-        "object": "gene",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002430",
-        "label": "involved in negative regulation of",
-        "object": "transcription_factor",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002430",
-        "label": "involved in negative regulation of",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002430",
-        "label": "involved in negative regulation of",
-        "object": "gene",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0012012",
-        "label": "indirectly regulates",
-        "object": "transcription_factor",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0012012",
-        "label": "indirectly regulates",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "object": "protein",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "object": "transcription_factor",
-        "fromInstance": true
       },
       {
         "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
@@ -420,14 +364,14 @@
         "fromInstance": false
       },
       {
-        "property": "http://semanticscience.org/resource/SIO_000772",
-        "label": "has evidence",
+        "property": "http://schema.org/memberOf",
+        "label": "is member of",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       },
       {
-        "property": "http://schema.org/memberOf",
-        "label": "is member of",
+        "property": "http://semanticscience.org/resource/SIO_000772",
+        "label": "has evidence",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       },
@@ -438,7 +382,99 @@
         "fromInstance": false
       }
     ],
+    "gene": [
+      {
+        "property": "http://purl.org/dc/terms/hasVersion",
+        "label": "has version",
+        "object": "reference_genome",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "object": "gene",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
+        "label": "part of",
+        "object": "chromosome",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_010078",
+        "label": "encodes",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_010078",
+        "label": "encodes",
+        "object": "transcription_factor",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "object": "gene",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#closeMatch",
+        "label": "has close match",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002331",
+        "label": "involved in",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/GENO_0000906",
+        "label": "on strand",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      }
+    ],
     "transcription_factor": [
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002429",
+        "label": "involved in positive regulation of",
+        "object": "transcription_factor",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002429",
+        "label": "involved in positive regulation of",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002429",
+        "label": "involved in positive regulation of",
+        "object": "gene",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002578",
+        "label": "directly regulates",
+        "object": "transcription_factor",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002578",
+        "label": "directly regulates",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000558",
+        "label": "is orthologous to",
+        "object": "protein",
+        "fromInstance": false
+      },
       {
         "property": "http://purl.obolibrary.org/obo/BFO_0000050",
         "label": "part of",
@@ -452,18 +488,6 @@
         "fromInstance": false
       },
       {
-        "property": "http://purl.obolibrary.org/obo/RO_0002578",
-        "label": "directly regulates",
-        "object": "transcription_factor",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002578",
-        "label": "directly regulates",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
         "property": "http://purl.obolibrary.org/obo/RO_0002331",
         "label": "involved in",
         "object": "biological_process",
@@ -488,6 +512,18 @@
         "fromInstance": false
       },
       {
+        "property": "http://purl.obolibrary.org/obo/RO_0012012",
+        "label": "indirectly regulates",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0012012",
+        "label": "indirectly regulates",
+        "object": "transcription_factor",
+        "fromInstance": false
+      },
+      {
         "property": "http://purl.obolibrary.org/obo/RO_0002430",
         "label": "involved in negative regulation of",
         "object": "transcription_factor",
@@ -516,42 +552,6 @@
         "label": "is instance of",
         "object": "protein",
         "fromInstance": true
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0012012",
-        "label": "indirectly regulates",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0012012",
-        "label": "indirectly regulates",
-        "object": "transcription_factor",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002429",
-        "label": "involved in positive regulation of",
-        "object": "transcription_factor",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002429",
-        "label": "involved in positive regulation of",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002429",
-        "label": "involved in positive regulation of",
-        "object": "gene",
-        "fromInstance": false
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000558",
-        "label": "is orthologous to",
-        "object": "protein",
-        "fromInstance": false
       },
       {
         "property": "http://purl.obolibrary.org/obo/RO_0002428",
@@ -578,26 +578,26 @@
         "fromInstance": false
       },
       {
-        "property": "http://semanticscience.org/resource/SIO_000772",
-        "label": "has evidence",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
         "property": "http://www.w3.org/2004/02/skos/core#exactMatch",
         "label": "has exact match",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2004/02/skos/core#closeMatch",
-        "label": "has close match",
+        "property": "http://semanticscience.org/resource/SIO_000772",
+        "label": "has evidence",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       },
       {
         "property": "http://schema.org/memberOf",
         "label": "is member of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#closeMatch",
+        "label": "has close match",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       }
@@ -626,6 +626,12 @@
     ],
     "crm": [
       {
+        "property": "http://purl.obolibrary.org/obo/RO_0002429",
+        "label": "involved in positive regulation of",
+        "object": "gene",
+        "fromInstance": false
+      },
+      {
         "property": "http://purl.obolibrary.org/obo/RO_0002436",
         "label": "molecularly interacts with",
         "object": "transcription_factor",
@@ -638,21 +644,15 @@
         "fromInstance": false
       },
       {
-        "property": "http://purl.obolibrary.org/obo/RO_0002429",
-        "label": "involved in positive regulation of",
-        "object": "gene",
+        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
+        "label": "part of",
+        "object": "chromosome",
         "fromInstance": false
       },
       {
         "property": "http://purl.org/dc/terms/hasVersion",
         "label": "has version",
         "object": "reference_genome",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
-        "label": "part of",
-        "object": "chromosome",
         "fromInstance": false
       },
       {
@@ -674,6 +674,80 @@
         "fromInstance": false
       },
       {
+        "property": "http://schema.org/evidenceOrigin",
+        "label": "has evidence origin",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+        "label": "is defined by",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/TXPO_0003500",
+        "label": "observed in",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002331",
+        "label": "involved in",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000772",
+        "label": "has evidence",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      }
+    ],
+    "reg2targ": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+        "label": "object",
+        "object": "transcription_factor",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+        "label": "subject",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
+        "label": "part of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000253",
+        "label": "has source",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002331",
+        "label": "involved in",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+        "label": "predicte",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
         "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         "label": "is defined by",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
@@ -686,58 +760,20 @@
         "fromInstance": true
       },
       {
-        "property": "http://purl.obolibrary.org/obo/RO_0002331",
-        "label": "involved in",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/TXPO_0003500",
-        "label": "observed in",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://schema.org/evidenceOrigin",
-        "label": "has evidence origin",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      }
-    ],
-    "gene2phen": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
-        "label": "object",
-        "object": "omim",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-        "label": "subject",
-        "object": "gene",
-        "fromInstance": false
-      },
-      {
         "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
         "label": "is subclass of",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
+        "property": "http://purl.obolibrary.org/obo/BFO_0000066",
+        "label": "occurs in",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
+        "fromInstance": true
       },
       {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
-        "label": "predicte",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000253",
-        "label": "has source",
+        "property": "http://www.w3.org/2004/02/skos/core#relatedMatch",
+        "label": "has related match",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       }
@@ -768,6 +804,12 @@
         "fromInstance": false
       },
       {
+        "property": "http://schema.org/evidenceOrigin",
+        "label": "has evidence origin",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
         "label": "predicte",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
@@ -780,14 +822,78 @@
         "fromInstance": false
       },
       {
+        "property": "http://semanticscience.org/resource/SIO_000772",
+        "label": "has evidence",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
         "property": "https://w3id.org/biolink/vocab/category",
         "label": "category",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
+      }
+    ],
+    "gene2phen": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+        "label": "subject",
+        "object": "gene",
+        "fromInstance": false
       },
       {
-        "property": "http://schema.org/evidenceOrigin",
-        "label": "has evidence origin",
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+        "label": "object",
+        "object": "omim",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000253",
+        "label": "has source",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+        "label": "predicte",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      }
+    ],
+    "prot2cc": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+        "label": "object",
+        "object": "cellular_component",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+        "label": "subject",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000253",
+        "label": "has source",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       },
@@ -796,9 +902,121 @@
         "label": "has evidence",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+        "label": "predicte",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
       }
     ],
-    "reg2targ": [
+    "prot2prot": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+        "label": "object",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+        "label": "subject",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000253",
+        "label": "has source",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+        "label": "is defined by",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+        "label": "predicte",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000772",
+        "label": "has evidence",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
+        "label": "part of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      }
+    ],
+    "prot2bp": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+        "label": "subject",
+        "object": "protein",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
+        "label": "object",
+        "object": "biological_process",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000253",
+        "label": "has source",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+        "label": "predicte",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000772",
+        "label": "has evidence",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      }
+    ],
+    "ortho": [
       {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
         "label": "object",
@@ -818,6 +1036,12 @@
         "fromInstance": false
       },
       {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+        "label": "predicte",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
@@ -830,146 +1054,10 @@
         "fromInstance": true
       },
       {
-        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        "label": "is defined by",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
-        "label": "predicte",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
         "property": "http://semanticscience.org/resource/SIO_000253",
         "label": "has source",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002331",
-        "label": "involved in",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000066",
-        "label": "occurs in",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000772",
-        "label": "has evidence",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#relatedMatch",
-        "label": "has related match",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      }
-    ],
-    "prot2prot": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
-        "label": "object",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-        "label": "subject",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
-        "label": "part of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
-        "label": "predicte",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000253",
-        "label": "has source",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        "label": "is defined by",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000772",
-        "label": "has evidence",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      }
-    ],
-    "prot2cc": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-        "label": "subject",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
-        "label": "object",
-        "object": "cellular_component",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
-        "label": "predicte",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000253",
-        "label": "has source",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000772",
-        "label": "has evidence",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
       }
     ],
     "prot2mf": [
@@ -986,12 +1074,6 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
-        "label": "predicte",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
         "property": "http://semanticscience.org/resource/SIO_000253",
         "label": "has source",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
@@ -1001,32 +1083,6 @@
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000772",
-        "label": "has evidence",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      }
-    ],
-    "prot2bp": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
-        "label": "object",
-        "object": "biological_process",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-        "label": "subject",
-        "object": "protein",
         "fromInstance": false
       },
       {
@@ -1046,18 +1102,6 @@
         "label": "has evidence",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000253",
-        "label": "has source",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
       }
     ],
     "crm2tfac": [
@@ -1080,8 +1124,26 @@
         "fromInstance": false
       },
       {
+        "property": "http://schema.org/evidenceOrigin",
+        "label": "has evidence origin",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
         "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
         "label": "is subclass of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000772",
+        "label": "has evidence",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+        "label": "predicte",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       },
@@ -1098,72 +1160,10 @@
         "fromInstance": false
       },
       {
-        "property": "http://schema.org/evidenceOrigin",
-        "label": "has evidence origin",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000772",
-        "label": "has evidence",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
-        "label": "predicte",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
         "property": "http://purl.obolibrary.org/obo/TXPO_0003500",
         "label": "observed in",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
-      }
-    ],
-    "ortho": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#object",
-        "label": "object",
-        "object": "transcription_factor",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-        "label": "subject",
-        "object": "protein",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
-        "label": "predicte",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
-        "label": "part of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://semanticscience.org/resource/SIO_000253",
-        "label": "has source",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
       }
     ],
     "tfac2gene": [
@@ -1180,20 +1180,14 @@
         "fromInstance": false
       },
       {
-        "property": "http://purl.obolibrary.org/obo/RO_0002331",
-        "label": "involved in",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002331",
+        "label": "involved in",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       },
@@ -1204,20 +1198,26 @@
         "fromInstance": false
       },
       {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
+      },
+      {
         "property": "http://semanticscience.org/resource/SIO_000772",
         "label": "has evidence",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       },
       {
-        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        "label": "is defined by",
+        "property": "http://semanticscience.org/resource/SIO_000253",
+        "label": "has source",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       },
       {
-        "property": "http://semanticscience.org/resource/SIO_000253",
-        "label": "has source",
+        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+        "label": "is defined by",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": true
       }
@@ -1242,20 +1242,14 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
-        "label": "predicte",
+        "property": "http://schema.org/evidenceOrigin",
+        "label": "has evidence origin",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
+        "fromInstance": true
       },
       {
         "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
         "label": "is subclass of",
-        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
         "fromInstance": false
       },
@@ -1272,10 +1266,16 @@
         "fromInstance": true
       },
       {
-        "property": "http://schema.org/evidenceOrigin",
-        "label": "has evidence origin",
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
         "object": "http://www.w3.org/2001/XMLSchema#anyURI",
-        "fromInstance": true
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate",
+        "label": "predicte",
+        "object": "http://www.w3.org/2001/XMLSchema#anyURI",
+        "fromInstance": false
       },
       {
         "property": "http://purl.obolibrary.org/obo/TXPO_0003500",
@@ -1288,15 +1288,15 @@
   "dataProperties": {
     "omim": [
       {
-        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-        "label": "is subclass of",
-        "type": "http://purl.bioontology.org/ontology/STY/T072",
-        "fromInstance": false
-      },
-      {
         "property": "http://bioportal.bioontology.org/ontologies/umls/hasSTY",
         "label": "Semantic type UMLS property",
         "type": "http://purl.bioontology.org/ontology/STY/T057",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+        "label": "is subclass of",
+        "type": "http://purl.bioontology.org/ontology/STY/T072",
         "fromInstance": false
       },
       {
@@ -1312,8 +1312,14 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2002/07/owl#versionInfo",
-        "label": "versionInfo",
+        "property": "http://purl.bioontology.org/ontology/OMIM/MOVED_FROM",
+        "label": "Moved from",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.bioontology.org/ontology/OMIM/GENESYMBOL",
+        "label": "Gene Symbol",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       },
@@ -1330,44 +1336,14 @@
         "fromInstance": true
       },
       {
-        "property": "http://www.w3.org/2000/01/rdf-schema#label",
-        "label": "rdf-schema#label",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "http://bioportal.bioontology.org/ontologies/umls/tui",
-        "label": "tui",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
         "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
         "label": "has name",
         "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString",
         "fromInstance": true
       },
       {
-        "property": "http://purl.bioontology.org/ontology/OMIM/GENESYMBOL",
-        "label": "Gene Symbol",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "http://purl.bioontology.org/ontology/OMIM/GENELOCUS",
-        "label": "Gene Locus",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "http://bioportal.bioontology.org/ontologies/umls/cui",
-        "label": "cui",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "http://purl.bioontology.org/ontology/OMIM/MIMTYPEVALUE",
-        "label": "OMIM MimType Value",
+        "property": "http://www.w3.org/2000/01/rdf-schema#label",
+        "label": "rdf-schema#label",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       },
@@ -1378,14 +1354,8 @@
         "fromInstance": true
       },
       {
-        "property": "http://purl.bioontology.org/ontology/OMIM/MIMTYPE",
-        "label": "OMIM Entry Type",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "http://purl.bioontology.org/ontology/OMIM/MOVED_FROM",
-        "label": "Moved from",
+        "property": "http://www.w3.org/2002/07/owl#versionInfo",
+        "label": "versionInfo",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       },
@@ -1396,8 +1366,38 @@
         "fromInstance": true
       },
       {
+        "property": "http://bioportal.bioontology.org/ontologies/umls/tui",
+        "label": "tui",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
+        "property": "http://bioportal.bioontology.org/ontologies/umls/cui",
+        "label": "cui",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
         "property": "http://www.w3.org/2004/02/skos/core#notation",
         "label": "core#notation",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.bioontology.org/ontology/OMIM/GENELOCUS",
+        "label": "Gene Locus",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.bioontology.org/ontology/OMIM/MIMTYPEVALUE",
+        "label": "OMIM MimType Value",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.bioontology.org/ontology/OMIM/MIMTYPE",
+        "label": "OMIM Entry Type",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       },
@@ -1408,43 +1408,11 @@
         "fromInstance": true
       }
     ],
-    "database": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
-        "label": "has name",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "https://w3id.org/biolink/vocab/category",
-        "label": "category",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      }
-    ],
     "molecular_interaction": [
       {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
         "type": "http://www.w3.org/2000/01/rdf-schema#Class",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#label",
-        "label": "rdf-schema#label",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#creation_date",
-        "label": "oboInOwl#creation_date",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
       {
@@ -1454,8 +1422,8 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
-        "label": "has_obo_namespace",
+        "property": "http://www.geneontology.org/formats/oboInOwl#id",
+        "label": "oboInOwl#id",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
@@ -1466,14 +1434,26 @@
         "fromInstance": false
       },
       {
+        "property": "http://www.geneontology.org/formats/oboInOwl#creation_date",
+        "label": "oboInOwl#creation_date",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
         "property": "http://purl.obolibrary.org/obo/IAO_0000115",
         "label": "definition",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
       {
-        "property": "http://www.geneontology.org/formats/oboInOwl#id",
-        "label": "oboInOwl#id",
+        "property": "http://www.w3.org/2000/01/rdf-schema#label",
+        "label": "rdf-schema#label",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+        "label": "has_obo_namespace",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
@@ -1498,12 +1478,6 @@
         "fromInstance": false
       },
       {
-        "property": "http://purl.obolibrary.org/obo/IAO_0000115",
-        "label": "definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
         "property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
         "label": "has_exact_synonym",
         "type": "http://www.w3.org/2001/XMLSchema#string",
@@ -1516,88 +1490,14 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
-        "label": "has_obo_namespace",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
         "property": "http://www.w3.org/2000/01/rdf-schema#label",
         "label": "rdf-schema#label",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#inSubset",
-        "label": "in_subset",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      }
-    ],
-    "molecular_function": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#comment",
-        "label": "rdf-schema#comment",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#label",
-        "label": "rdf-schema#label",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
-        "label": "has_exact_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym",
-        "label": "has_narrow_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
-        "label": "has_broad_synonym",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
       {
         "property": "http://purl.obolibrary.org/obo/IAO_0000115",
         "label": "definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
-        "label": "has_related_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#id",
-        "label": "oboInOwl#id",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
-        "label": "database_cross_reference",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
-        "label": "has_alternative_id",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
@@ -1614,7 +1514,7 @@
         "fromInstance": false
       }
     ],
-    "cellular_component": [
+    "database": [
       {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
@@ -1622,154 +1522,14 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2000/01/rdf-schema#comment",
-        "label": "rdf-schema#comment",
+        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "label": "has name",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
       {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
-        "label": "database_cross_reference",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
-        "label": "has_related_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
-        "label": "has_alternative_id",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#label",
-        "label": "rdf-schema#label",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
-        "label": "has_exact_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/IAO_0000115",
-        "label": "definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym",
-        "label": "has_narrow_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#id",
-        "label": "oboInOwl#id",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
-        "label": "has_obo_namespace",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#inSubset",
-        "label": "in_subset",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      }
-    ],
-    "biological_process": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/IAO_0000115",
-        "label": "definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#comment",
-        "label": "rdf-schema#comment",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym",
-        "label": "has_narrow_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#label",
-        "label": "rdf-schema#label",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
-        "label": "has_exact_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
-        "label": "database_cross_reference",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
-        "label": "has_related_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#id",
-        "label": "oboInOwl#id",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
-        "label": "has_obo_namespace",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
-        "label": "has_alternative_id",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
-        "label": "has_broad_synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.geneontology.org/formats/oboInOwl#inSubset",
-        "label": "in_subset",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2002/07/owl#onProperty",
-        "label": "onProperty",
+        "property": "https://w3id.org/biolink/vocab/category",
+        "label": "category",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       }
@@ -1820,56 +1580,6 @@
         "fromInstance": false
       }
     ],
-    "gene": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
-        "label": "part of",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/RO_0002162",
-        "label": "in taxon",
-        "type": "http://purl.obolibrary.org/obo/NCBITaxon_10114",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#definition",
-        "label": "has definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
-        "label": "has name",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#altLabel",
-        "label": "has synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/GENO_0000894",
-        "label": "start position",
-        "type": "http://www.w3.org/2001/XMLSchema#integer",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/GENO_0000895",
-        "label": "end position",
-        "type": "http://www.w3.org/2001/XMLSchema#integer",
-        "fromInstance": false
-      }
-    ],
     "tad": [
       {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
@@ -1884,18 +1594,6 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2004/02/skos/core#definition",
-        "label": "has definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/GENO_0000894",
-        "label": "start position",
-        "type": "http://www.w3.org/2001/XMLSchema#integer",
-        "fromInstance": false
-      },
-      {
         "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
         "label": "has name",
         "type": "http://www.w3.org/2001/XMLSchema#string",
@@ -1908,13 +1606,271 @@
         "fromInstance": false
       },
       {
+        "property": "http://www.w3.org/2004/02/skos/core#definition",
+        "label": "has definition",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/GENO_0000894",
+        "label": "start position",
+        "type": "http://www.w3.org/2001/XMLSchema#integer",
+        "fromInstance": false
+      },
+      {
         "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         "label": "is defined by",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       }
     ],
+    "molecular_function": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#label",
+        "label": "rdf-schema#label",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
+        "label": "has_related_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+        "label": "has_obo_namespace",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+        "label": "has_alternative_id",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym",
+        "label": "has_narrow_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
+        "label": "has_broad_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+        "label": "database_cross_reference",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+        "label": "has_exact_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#comment",
+        "label": "rdf-schema#comment",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/IAO_0000115",
+        "label": "definition",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#id",
+        "label": "oboInOwl#id",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#inSubset",
+        "label": "in_subset",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      }
+    ],
+    "cellular_component": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+        "label": "database_cross_reference",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+        "label": "has_alternative_id",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+        "label": "has_obo_namespace",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/IAO_0000115",
+        "label": "definition",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym",
+        "label": "has_narrow_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+        "label": "has_exact_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#label",
+        "label": "rdf-schema#label",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#comment",
+        "label": "rdf-schema#comment",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#id",
+        "label": "oboInOwl#id",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
+        "label": "has_related_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#inSubset",
+        "label": "in_subset",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      }
+    ],
+    "biological_process": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+        "label": "database_cross_reference",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+        "label": "has_obo_namespace",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/IAO_0000115",
+        "label": "definition",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#label",
+        "label": "rdf-schema#label",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+        "label": "has_exact_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+        "label": "has_alternative_id",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
+        "label": "has_broad_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym",
+        "label": "has_narrow_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#comment",
+        "label": "rdf-schema#comment",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym",
+        "label": "has_related_synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#id",
+        "label": "oboInOwl#id",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.geneontology.org/formats/oboInOwl#inSubset",
+        "label": "in_subset",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2002/07/owl#onProperty",
+        "label": "onProperty",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      }
+    ],
     "protein": [
+      {
+        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
+        "label": "part of",
+        "type": "http://purl.obolibrary.org/obo/GO_0090576",
+        "fromInstance": false
+      },
       {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
@@ -1925,12 +1881,6 @@
         "property": "http://purl.obolibrary.org/obo/RO_0002162",
         "label": "in taxon",
         "type": "http://purl.obolibrary.org/obo/NCBITaxon_9605",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
-        "label": "part of",
-        "type": "http://purl.obolibrary.org/obo/GO_0090576",
         "fromInstance": false
       },
       {
@@ -1952,12 +1902,6 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2004/02/skos/core#altLabel",
-        "label": "has synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
         "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
         "label": "has name",
         "type": "http://www.w3.org/2001/XMLSchema#string",
@@ -1970,13 +1914,19 @@
         "fromInstance": false
       },
       {
+        "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+        "label": "has synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
         "property": "http://schema.org/evidenceLevel",
         "label": "has evidence level",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       }
     ],
-    "transcription_factor": [
+    "gene": [
       {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
@@ -1986,7 +1936,57 @@
       {
         "property": "http://purl.obolibrary.org/obo/RO_0002162",
         "label": "in taxon",
+        "type": "http://purl.obolibrary.org/obo/NCBITaxon_10114",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
+        "label": "part of",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+        "label": "has synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/GENO_0000894",
+        "label": "start position",
+        "type": "http://www.w3.org/2001/XMLSchema#integer",
+        "fromInstance": false
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/GENO_0000895",
+        "label": "end position",
+        "type": "http://www.w3.org/2001/XMLSchema#integer",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "label": "has name",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#definition",
+        "label": "has definition",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      }
+    ],
+    "transcription_factor": [
+      {
+        "property": "http://purl.obolibrary.org/obo/RO_0002162",
+        "label": "in taxon",
         "type": "http://purl.obolibrary.org/obo/NCBITaxon_9605",
+        "fromInstance": false
+      },
+      {
+        "property": "http://semanticscience.org/resource/SIO_000558",
+        "label": "is orthologous to",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
       {
@@ -2008,22 +2008,10 @@
         "fromInstance": false
       },
       {
-        "property": "http://semanticscience.org/resource/SIO_000558",
-        "label": "is orthologous to",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
         "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#definition",
-        "label": "has definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#altLabel",
-        "label": "has synonym",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
       },
       {
         "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
@@ -2032,8 +2020,20 @@
         "fromInstance": true
       },
       {
+        "property": "http://www.w3.org/2004/02/skos/core#altLabel",
+        "label": "has synonym",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
         "property": "http://schema.org/evidenceLevel",
         "label": "has evidence level",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#definition",
+        "label": "has definition",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       }
@@ -2043,12 +2043,6 @@
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
         "type": "http://www.w3.org/2000/01/rdf-schema#Class",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#label",
-        "label": "rdf-schema#label",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
       {
@@ -2068,6 +2062,12 @@
         "label": "has_obo_namespace",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#label",
+        "label": "rdf-schema#label",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
       }
     ],
     "taxonomic_rank": [
@@ -2078,29 +2078,29 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
-        "label": "has_obo_namespace",
+        "property": "http://www.w3.org/2000/01/rdf-schema#label",
+        "label": "rdf-schema#label",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2000/01/rdf-schema#label",
-        "label": "rdf-schema#label",
+        "property": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+        "label": "has_obo_namespace",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       }
     ],
     "crm": [
       {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
-        "fromInstance": false
-      },
-      {
         "property": "http://purl.obolibrary.org/obo/RO_0002162",
         "label": "in taxon",
         "type": "http://purl.obolibrary.org/obo/NCBITaxon_9605",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "type": "http://www.w3.org/2000/01/rdf-schema#Class",
         "fromInstance": false
       },
       {
@@ -2122,68 +2122,22 @@
         "fromInstance": false
       },
       {
+        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "label": "has name",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
         "property": "http://purl.obolibrary.org/obo/GENO_0000895",
         "label": "end position",
         "type": "http://www.w3.org/2001/XMLSchema#integer",
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
-        "label": "has name",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
         "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         "label": "is defined by",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
-      }
-    ],
-    "gene2phen": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
-        "label": "has name",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#definition",
-        "label": "has definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      }
-    ],
-    "crm2phen": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
-        "label": "has name",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#definition",
-        "label": "has definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "https://w3id.org/biolink/vocab/category",
-        "label": "category",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
       }
     ],
     "reg2targ": [
@@ -2200,14 +2154,14 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
-        "label": "has name",
+        "property": "http://schema.org/evidenceLevel",
+        "label": "has evidence level",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       },
       {
-        "property": "http://schema.org/evidenceLevel",
-        "label": "has evidence level",
+        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "label": "has name",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       },
@@ -2222,6 +2176,78 @@
         "label": "is defined by",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
+      }
+    ],
+    "crm2phen": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#definition",
+        "label": "has definition",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "label": "has name",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "https://w3id.org/biolink/vocab/category",
+        "label": "category",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      }
+    ],
+    "gene2phen": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#definition",
+        "label": "has definition",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "label": "has name",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      }
+    ],
+    "prot2cc": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "label": "has name",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+        "label": "is defined by",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#definition",
+        "label": "has definition",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
       }
     ],
     "prot2prot": [
@@ -2238,9 +2264,35 @@
         "fromInstance": false
       },
       {
+        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "label": "has name",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
+      },
+      {
         "property": "http://schema.org/evidenceLevel",
         "label": "has evidence level",
         "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+        "label": "is defined by",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      },
+      {
+        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
+        "label": "part of",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": true
+      }
+    ],
+    "prot2bp": [
+      {
+        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+        "label": "is instance of",
+        "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
         "fromInstance": true
       },
       {
@@ -2250,19 +2302,19 @@
         "fromInstance": false
       },
       {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
-        "label": "part of",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
         "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         "label": "is defined by",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
+      },
+      {
+        "property": "http://www.w3.org/2004/02/skos/core#definition",
+        "label": "has definition",
+        "type": "http://www.w3.org/2001/XMLSchema#string",
+        "fromInstance": false
       }
     ],
-    "prot2cc": [
+    "ortho": [
       {
         "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
         "label": "is instance of",
@@ -2279,11 +2331,11 @@
         "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
         "label": "has name",
         "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
+        "fromInstance": true
       },
       {
-        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        "label": "is defined by",
+        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
+        "label": "part of",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       }
@@ -2302,40 +2354,14 @@
         "fromInstance": false
       },
       {
-        "property": "http://www.w3.org/2004/02/skos/core#definition",
-        "label": "has definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-        "label": "is defined by",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      }
-    ],
-    "prot2bp": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#definition",
-        "label": "has definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
         "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         "label": "is defined by",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       },
       {
-        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
-        "label": "has name",
+        "property": "http://www.w3.org/2004/02/skos/core#definition",
+        "label": "has definition",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": false
       }
@@ -2348,46 +2374,20 @@
         "fromInstance": true
       },
       {
-        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
-        "label": "has name",
+        "property": "http://www.w3.org/2004/02/skos/core#definition",
+        "label": "has definition",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       },
       {
-        "property": "http://www.w3.org/2004/02/skos/core#definition",
-        "label": "has definition",
+        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "label": "has name",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       },
       {
         "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         "label": "is defined by",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      }
-    ],
-    "ortho": [
-      {
-        "property": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-        "label": "is instance of",
-        "type": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
-        "label": "has name",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
-      },
-      {
-        "property": "http://www.w3.org/2004/02/skos/core#definition",
-        "label": "has definition",
-        "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": false
-      },
-      {
-        "property": "http://purl.obolibrary.org/obo/BFO_0000050",
-        "label": "part of",
         "type": "http://www.w3.org/2001/XMLSchema#string",
         "fromInstance": true
       }
@@ -2415,7 +2415,7 @@
         "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
         "label": "has name",
         "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
+        "fromInstance": false
       },
       {
         "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
@@ -2441,7 +2441,7 @@
         "property": "http://www.w3.org/2004/02/skos/core#prefLabel",
         "label": "has name",
         "type": "http://www.w3.org/2001/XMLSchema#string",
-        "fromInstance": true
+        "fromInstance": false
       },
       {
         "property": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",

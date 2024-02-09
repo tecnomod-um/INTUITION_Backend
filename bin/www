@@ -1,8 +1,16 @@
 #!/usr/bin/env node
 const app = require('../app');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8888;
+const path = require('path');
 const logger = require('../src/utils/logger.js');
+var fs = require('fs');
+const https  = require('https');
+var privateKey = fs.readFileSync(path.join(__dirname, '../certs/privada.pem'));
+var certificate = fs.readFileSync(path.join(__dirname, '../certs/semantics_inf_um_es.crt'));
 
-app.listen(port, () => {
+https.createServer({
+    key: privateKey,
+    cert: certificate
+}, app).listen(port, () => {
   logger.info(`Server is running on port ${port}`);
 });

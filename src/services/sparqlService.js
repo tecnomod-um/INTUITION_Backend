@@ -3,6 +3,8 @@ const axiosRetry = require('axios-retry');
 const logger = require('../utils/logger.js');
 
 const executeQuery = async (endpoint, query) => {
+    console.log(endpoint);
+    console.log(query);
     const startTime = Date.now();
     const options = {
         method: 'POST',

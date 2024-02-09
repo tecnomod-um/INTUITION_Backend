@@ -5,24 +5,6 @@
     "uri_element": "http://www.w3.org/2002/07/owl#Thing",
     "uri_graph": "http://rdf.biogateway.eu/graph/omim"
   },
-  "gene2phen": {
-    "label": "Gene2phen",
-    "useGraphOnly": true,
-    "uri_element": "Triplet",
-    "uri_graph": "http://rdf.biogateway.eu/graph/gene2phen"
-  },
-  "crm2phen": {
-    "label": "Crm2phen",
-    "useGraphOnly": true,
-    "uri_element": "Triplet",
-    "uri_graph": "http://rdf.biogateway.eu/graph/crm2phen"
-  },
-  "database": {
-    "label": "Database",
-    "useGraphOnly": false,
-    "uri_element": "http://purl.obolibrary.org/obo/NCIT_C15426",
-    "uri_graph": "http://rdf.biogateway.eu/graph/crm2phen"
-  },
   "molecular_interaction": {
     "label": "molecular interaction",
     "useGraphOnly": false,
@@ -34,6 +16,48 @@
     "useGraphOnly": false,
     "uri_element": "nodeID://b157161",
     "uri_graph": "http://rdf.biogateway.eu/graph/mi"
+  },
+  "reg2targ": {
+    "label": "Reg2targ",
+    "useGraphOnly": true,
+    "uri_element": "Triplet",
+    "uri_graph": "http://rdf.biogateway.eu/graph/reg2targ"
+  },
+  "database": {
+    "label": "Database",
+    "useGraphOnly": false,
+    "uri_element": "http://purl.obolibrary.org/obo/NCIT_C15426",
+    "uri_graph": "http://rdf.biogateway.eu/graph/tad"
+  },
+  "chromosome": {
+    "label": "chromosome",
+    "useGraphOnly": false,
+    "uri_element": "http://purl.obolibrary.org/obo/SO_0000340",
+    "uri_graph": "http://rdf.biogateway.eu/graph/tad"
+  },
+  "reference_genome": {
+    "label": "reference genome",
+    "useGraphOnly": false,
+    "uri_element": "http://purl.obolibrary.org/obo/SO_0001505",
+    "uri_graph": "http://rdf.biogateway.eu/graph/tad"
+  },
+  "tad": {
+    "label": "TAD",
+    "useGraphOnly": false,
+    "uri_element": "http://purl.obolibrary.org/obo/SO_0002304",
+    "uri_graph": "http://rdf.biogateway.eu/graph/tad"
+  },
+  "crm2phen": {
+    "label": "Crm2phen",
+    "useGraphOnly": true,
+    "uri_element": "Triplet",
+    "uri_graph": "http://rdf.biogateway.eu/graph/crm2phen"
+  },
+  "gene2phen": {
+    "label": "Gene2phen",
+    "useGraphOnly": true,
+    "uri_element": "Triplet",
+    "uri_graph": "http://rdf.biogateway.eu/graph/gene2phen"
   },
   "molecular_function": {
     "label": "molecular_function",
@@ -53,17 +77,11 @@
     "uri_element": "http://purl.obolibrary.org/obo/GO_0008150",
     "uri_graph": "http://rdf.biogateway.eu/graph/go"
   },
-  "chromosome": {
-    "label": "chromosome",
+  "protein": {
+    "label": "Protein",
     "useGraphOnly": false,
-    "uri_element": "http://purl.obolibrary.org/obo/SO_0000340",
-    "uri_graph": "http://rdf.biogateway.eu/graph/gene"
-  },
-  "reference_genome": {
-    "label": "reference genome",
-    "useGraphOnly": false,
-    "uri_element": "http://purl.obolibrary.org/obo/SO_0001505",
-    "uri_graph": "http://rdf.biogateway.eu/graph/gene"
+    "uri_element": "http://semanticscience.org/resource/SIO_010043",
+    "uri_graph": "http://rdf.biogateway.eu/graph/prot"
   },
   "gene": {
     "label": "Gene",
@@ -71,23 +89,11 @@
     "uri_element": "http://semanticscience.org/resource/SIO_010035",
     "uri_graph": "http://rdf.biogateway.eu/graph/gene"
   },
-  "reg2targ": {
-    "label": "Reg2targ",
+  "prot2cc": {
+    "label": "Prot2cc",
     "useGraphOnly": true,
     "uri_element": "Triplet",
-    "uri_graph": "http://rdf.biogateway.eu/graph/reg2targ"
-  },
-  "tad": {
-    "label": "TAD",
-    "useGraphOnly": false,
-    "uri_element": "http://purl.obolibrary.org/obo/SO_0002304",
-    "uri_graph": "http://rdf.biogateway.eu/graph/tad"
-  },
-  "protein": {
-    "label": "Protein",
-    "useGraphOnly": false,
-    "uri_element": "http://semanticscience.org/resource/SIO_010043",
-    "uri_graph": "http://rdf.biogateway.eu/graph/prot"
+    "uri_graph": "http://rdf.biogateway.eu/graph/prot2cc"
   },
   "prot2prot": {
     "label": "Prot2prot",
@@ -95,23 +101,23 @@
     "uri_element": "Triplet",
     "uri_graph": "http://rdf.biogateway.eu/graph/prot2prot"
   },
-  "prot2cc": {
-    "label": "Prot2cc",
+  "prot2bp": {
+    "label": "Prot2bp",
     "useGraphOnly": true,
     "uri_element": "Triplet",
-    "uri_graph": "http://rdf.biogateway.eu/graph/prot2cc"
+    "uri_graph": "http://rdf.biogateway.eu/graph/prot2bp"
+  },
+  "ortho": {
+    "label": "Ortho",
+    "useGraphOnly": true,
+    "uri_element": "Triplet",
+    "uri_graph": "http://rdf.biogateway.eu/graph/ortho"
   },
   "prot2mf": {
     "label": "Prot2mf",
     "useGraphOnly": true,
     "uri_element": "Triplet",
     "uri_graph": "http://rdf.biogateway.eu/graph/prot2mf"
-  },
-  "prot2bp": {
-    "label": "Prot2bp",
-    "useGraphOnly": true,
-    "uri_element": "Triplet",
-    "uri_graph": "http://rdf.biogateway.eu/graph/prot2bp"
   },
   "crm2tfac": {
     "label": "Crm2tfac",
@@ -124,12 +130,6 @@
     "useGraphOnly": false,
     "uri_element": "http://purl.obolibrary.org/obo/NCIT_C17207",
     "uri_graph": "http://rdf.biogateway.eu/graph/crm2tfac"
-  },
-  "ortho": {
-    "label": "Ortho",
-    "useGraphOnly": true,
-    "uri_element": "Triplet",
-    "uri_graph": "http://rdf.biogateway.eu/graph/ortho"
   },
   "root": {
     "label": "root",
