@@ -25,4 +25,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-/src/data/nodes_long.json
+#project generated files
+nohup.out
+/certs
+/src/data

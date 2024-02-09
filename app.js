@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 const indexRouter = require('./routes/index');
 const dataRouter = require('./routes/data');
+const logger = require('./src/utils/logger.js');
 const crypto = require('crypto');
 require('dotenv').config();
 
@@ -33,5 +34,14 @@ app.use(cors(corsOptions));
 
 app.use('/', indexRouter);
 app.use('/intu', dataRouter);
+
+process.on('unhandledRejection', (ex) => {
+  throw ex;
+});
+
+logger.on('uncaughtException', (err) => {
+  console.error('There was an uncaught error', err);
+  process.exit(1);
+});
 
 module.exports = app;

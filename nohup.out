@@ -1,0 +1,58 @@
+
+> intuition_backend@0.0.0 start
+> node ./bin/www
+
+[32minfo[39m: Server is running on port 8888 {"timestamp":"2024-01-31 16:30:37"}
+Killed
+
+> intuition_backend@0.0.0 start
+> node ./bin/www
+
+[32minfo[39m: Server is running on port 8888 {"timestamp":"2024-01-31 17:18:34"}
+[32minfo[39m: Vars data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/vars_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:19:28"}
+[32minfo[39m: Vars data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/vars_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:19:28"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:19:28"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:19:29"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:19:39"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:19:40"}
+[32minfo[39m: Vars data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/vars_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:22:30"}
+[32minfo[39m: Vars data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/vars_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:22:30"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:22:30"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:22:31"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:22:57"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:22:58"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:28:38"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:28:38"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:29:15"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:29:15"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:30:10"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:30:11"}
+[32minfo[39m: Vars data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/vars_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:30:42"}
+[32minfo[39m: Vars data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/vars_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:30:42"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:30:42"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:30:43"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:31:00"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:31:01"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:31:34"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:31:35"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:31:43"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:31:44"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:32:40"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:32:41"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:32:52"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 17:32:53"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:15:15"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:15:16"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:22:30"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:22:31"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:22:53"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:22:55"}
+[32minfo[39m: Starting SPARQL Query Execution {"timestamp":"2024-01-31 18:23:37"}
+[32minfo[39m: Fetching required labels {"timestamp":"2024-01-31 18:23:38"}
+[32minfo[39m: Request processed successfully {"timestamp":"2024-01-31 18:23:38"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:24:39"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:24:40"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:26:53"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:27:00"}
+[32minfo[39m: Properties data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/properties_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:28:16"}
+[32minfo[39m: Nodes data fetched from file: /pool_discos_hdd/data/datos-danibanez/intuition/IntuitionBack/src/data/nodes_http%3A%2F%2Fssb4.nt.ntnu.no%3A23122%2Fsparql.json {"timestamp":"2024-01-31 18:28:17"}

@@ -40,7 +40,6 @@ const getVarsFromGraph = (graph) => {
                 <http://www.w3.org/2002/07/owl#someValuesFrom> 
                 <http://www.w3.org/2000/01/rdf-schema#subClassOf>
             }
-        
             FILTER NOT EXISTS {
                 ?VarType <http://www.w3.org/2002/07/owl#someValuesFrom> ?VarParentValues .
                 FILTER(?VarParentValues != ?VarType)
@@ -72,8 +71,7 @@ const getPropertiesForGraph = (graph) => {
     return (`
     SELECT DISTINCT ?p WHERE {
         GRAPH <${graph}> {
-                ?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
-                ?class ?p ?o .
+                ?s ?p ?o .
         }
     }
     `);
@@ -99,7 +97,6 @@ const getInstancePropertiesForGraph = (graph) => {
     SELECT DISTINCT ?p WHERE {
         GRAPH <${graph}> {
             ?graphInstance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?class .
-            ?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
             ?graphInstance ?p ?o
         }
     }
@@ -108,17 +105,15 @@ const getInstancePropertiesForGraph = (graph) => {
 
 const getQuerySubject = (useGraphOnly, fromInstance, property) => {
     if (useGraphOnly) {
-        if (fromInstance) {
-            return `?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?class .\n?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .`;
-        } else {
+        if (fromInstance)
+            return `?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?class .\n?class <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .\n?s <${property}> ?o .`;
+        else
             return `?s <${property}> ?o .`;
-        }
     } else {
-        if (fromInstance) {
+        if (fromInstance)
             return `?typeInstance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?s .\n?typeInstance <${property}> ?o .`;
-        } else {
+        else
             return `?s <${property}> ?o .`;
-        }
     }
 }
 
@@ -154,11 +149,11 @@ const getPropertySubClassForGraph = (graph, property, fromInstance) => {
 const getEmptyPropertiesForType = (type, emptyProperty, fromInstance) => {
     const subject = getQuerySubject(false, fromInstance, emptyProperty);
     return (`
-    SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), "") AS ?basicType) ?o WHERE {
+    SELECT DISTINCT ?p (IF(BOUND(?lang) && ?lang != "", "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString", IF(isLiteral(?o), datatype(?o), "")) AS ?basicType) ?o  WHERE {
         BIND(<${emptyProperty}> AS ?p)
         ?s ?Property <${type}> .
         ${subject}
-
+        BIND (lang(?o) AS ?lang) .
         VALUES ?Property {
             <http://www.w3.org/2002/07/owl#someValuesFrom> 
             <http://www.w3.org/2000/01/rdf-schema#subClassOf>
@@ -170,15 +165,11 @@ const getEmptyPropertiesForType = (type, emptyProperty, fromInstance) => {
 const getEmptyPropertiesForGraph = (graph, emptyProperty, fromInstance) => {
     const subject = getQuerySubject(true, fromInstance, emptyProperty);
     return (`
-    SELECT DISTINCT ?p (IF(isLiteral(?o), datatype(?o), "") AS ?basicType) ?o WHERE {
+    SELECT DISTINCT ?p (IF(BOUND(?lang) && ?lang != "", "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString", IF(isLiteral(?o), datatype(?o), "")) AS ?basicType) ?o WHERE {
         GRAPH <${graph}> {
             BIND(<${emptyProperty}> AS ?p)
             ${subject}
-
-            VALUES ?Property {
-                <http://www.w3.org/2002/07/owl#someValuesFrom> 
-                <http://www.w3.org/2000/01/rdf-schema#subClassOf>
-            }
+            BIND (lang(?o) AS ?lang) .
         }
     } LIMIT 1
     `);
@@ -201,20 +192,54 @@ const getPropertyType = (noValueProperties) => {
 
 const getElementForTriplet = (graph, type) => {
     return (`
-    SELECT (COUNT(?${type}) as ?count) ?${type} WHERE {
+    SELECT DISTINCT ?${type} WHERE {
     GRAPH <${graph}>  {
         ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#${type}> ?x
     }
     ?x <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?${type} .
     }
-    GROUP BY ?${type}
-    ORDER BY DESC(?count)
+    `);
+}
+
+const getPropertiesFromStructuredTriplets = (graph) => {
+    return (`
+    SELECT DISTINCT ?p WHERE {
+        GRAPH <${graph}> {
+                ?s <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+                ?s ?p ?o
+        }
+    }
+    `);
+}
+
+const getPropertiesFromInstancedTriplets = (graph) => {
+    return (`
+    SELECT DISTINCT ?p WHERE {
+        GRAPH <${graph}> {
+                ?s <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .
+                ?instance <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?s.
+                ?instance ?p ?o
+        }
+    }
+    `);
+}
+
+const getParentElementForTriplet = (element) => {
+    return (`
+    SELECT ?subClass (COUNT(?subClass) as ?subClassCount)
+    WHERE {
+        <${element}> <http://www.w3.org/2000/01/rdf-schema#subClassOf>* ?subClass .
+        OPTIONAL { ?subClass <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent. }
+        FILTER (!BOUND(?parent) || ?parent = <http://www.w3.org/2002/07/owl#Thing>)
+    }
+    GROUP BY ?subClass
+    ORDER BY DESC(?subClassCount)
     LIMIT 1
     `);
 }
 
 const getMissingElementForTriplet = (graph, property) => {
-    return `
+    return (`
     SELECT ?graph (COUNT(?x) as ?subjectCount) WHERE {
         GRAPH <${graph}> {
             ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#${property}> ?x .
@@ -226,7 +251,7 @@ const getMissingElementForTriplet = (graph, property) => {
     GROUP BY ?graph
     ORDER BY DESC(?subjectCount)
     LIMIT 1
-    `;
+    `);
 }
 
 const getDataPropertiesForTriplet = (graph) => {
@@ -234,7 +259,6 @@ const getDataPropertiesForTriplet = (graph) => {
     SELECT DISTINCT ?p ?type WHERE {
         GRAPH <${graph}> {
             ?s ?p ?o .
-
             BIND(datatype(?o) AS ?type)
         }
     }
@@ -278,7 +302,7 @@ const getNodesByGraph = (graph, varKey, limit) => {
 const getFilteredByType = (type, varKey, limit, filter) => {
     const queryLimit = limit ? ` LIMIT ${limit}` : "";
     return (`
-    SELECT DISTINCT ?node "${varKey}" AS ?varType WHERE {
+    SELECT DISTINCT ?node ( "${varKey}" AS ?varType ) WHERE {
         ?node ?property <${type}> .
         VALUES ?property {
             <http://www.w3.org/2002/07/owl#someValuesFrom> 
@@ -292,16 +316,20 @@ const getFilteredByType = (type, varKey, limit, filter) => {
 const getFilteredByGraph = (graph, varKey, limit, filter) => {
     const queryLimit = limit ? ` LIMIT ${limit}` : "";
     return (`
-    SELECT DISTINCT ?node "${varKey}" AS ?varType WHERE {
+    SELECT DISTINCT ?node ( "${varKey}" AS ?varType ) WHERE {
         GRAPH <${graph}> {
             ?node ?property ?o .
-            FILTER NOT EXISTS {
+            OPTIONAL {
                 ?o <http://www.w3.org/2002/07/owl#someValuesFrom> ?parent1 .
                 ?o <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent2 .
                 ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?parent3 .
-                FILTER(?o != ?parent1 && ?o != ?parent2 && ?o != ?parent3)
             }
-            FILTER(REGEX(?node, "${filter}") || REGEX(?varType, "${filter}")) .
+            FILTER(
+                (!BOUND(?parent1) || ?o = ?parent1) &&
+                (!BOUND(?parent2) || ?o = ?parent2) &&
+                (!BOUND(?parent3) || ?o = ?parent3) &&
+                (REGEX(?node, "${filter}") || REGEX(?varType, "${filter}"))
+            )
         }
     }${queryLimit}
     `);
@@ -319,6 +347,9 @@ module.exports = {
     getPropertySubClassForType,
     getPropertySubClassForGraph,
     getElementForTriplet,
+    getPropertiesFromStructuredTriplets,
+    getPropertiesFromInstancedTriplets,
+    getParentElementForTriplet,
     getMissingElementForTriplet,
     getDataPropertiesForTriplet,
     getNodesByType,
